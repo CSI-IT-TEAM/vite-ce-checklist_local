@@ -1,0 +1,726 @@
+import { useState, useEffect, useMemo } from 'react'
+import './History.css'
+import { getData } from '../../../hooks/getData'
+import { getHistory } from '../../../hooks/getHistory'
+import { useTranslation } from '../../../contexts/LanguageContext'
+import CustomDatePicker from '../../../component/ui/CustomDatePicker'
+import { format } from 'date-fns'
+
+const History = () => {
+    const { t, language } = useTranslation()
+    const [startDate, setStartDate] = useState<Date | null>(new Date())
+    const [endDate, setEndDate] = useState<Date | null>(new Date())
+    const [area, setArea] = useState('')
+    const [plant, setPlant] = useState('')
+    const [line, setLine] = useState('')
+    const [process, setProcess] = useState('')
+    const [machine, setMachine] = useState('')
+
+    const { mutate: getCombo } = getData()
+    const { mutate: searchHistory, isPending: isSearching } = getHistory()
+
+    const [historyList, setHistoryList] = useState<any[]>([])
+
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1)
+    const itemsPerPage = 10
+
+    // View mode state for mobile (grid or card)
+    const [viewMode, setViewMode] = useState<'grid' | 'card'>('grid')
+
+    // Memoized pivot logic - transform raw data into displayable rows
+    const pivotedRows = useMemo(() => {
+        if (historyList.length === 0) return [];
+
+        // Group data by unique event (Date + Time + Machine)
+        const groups: { [key: string]: any[] } = {};
+        historyList.forEach(item => {
+            const key = `${item.YMD}_${item.HMS}_${item.MACH_ID}`;
+            if (!groups[key]) {
+                groups[key] = [];
+            }
+            groups[key].push(item);
+        });
+
+        const rows: any[] = [];
+
+        Object.values(groups).forEach(groupItems => {
+            const leftItems = groupItems.filter(i => i.DIV?.toLowerCase() === 'left');
+            const rightItems = groupItems.filter(i => i.DIV?.toLowerCase() === 'right');
+            const otherItems = groupItems.filter(i => {
+                const d = i.DIV?.toLowerCase();
+                return d !== 'left' && d !== 'right';
+            });
+
+            const base = groupItems[0];
+
+            const getData = (items: any[], loc: string) => items.find(i => i.LOCATE?.toLowerCase() === loc.toLowerCase());
+
+            // Row 1: Left
+            if (leftItems.length > 0) {
+                rows.push({
+                    ...base,
+                    isRow: 'Left',
+                    lower: getData(leftItems, 'Lower'),
+                    middle: getData(leftItems, 'Middle'),
+                    upper: getData(leftItems, 'Upper')
+                });
+            }
+
+            // Row 2: Right
+            if (rightItems.length > 0) {
+                rows.push({
+                    ...base,
+                    isRow: 'Right',
+                    lower: getData(rightItems, 'Lower'),
+                    middle: getData(rightItems, 'Middle'),
+                    upper: getData(rightItems, 'Upper')
+                });
+            }
+
+            // Fallback for undefined DIVs
+            otherItems.forEach(item => {
+                rows.push({
+                    ...base,
+                    isRow: item.DIV || '-',
+                    lower: item.LOCATE?.toLowerCase() === 'lower' ? item : null,
+                    middle: item.LOCATE?.toLowerCase() === 'middle' ? item : null,
+                    upper: item.LOCATE?.toLowerCase() === 'upper' ? item : null,
+                });
+            });
+        });
+
+        return rows;
+    }, [historyList]);
+
+    // Reset page when history list changes
+    useEffect(() => {
+        setCurrentPage(1)
+    }, [historyList])
+
+    // Pagination logic - now based on pivoted rows
+    const totalPages = Math.ceil(pivotedRows.length / itemsPerPage)
+    const indexOfLastItem = currentPage * itemsPerPage
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage
+    const visibleRows = pivotedRows.slice(indexOfFirstItem, indexOfLastItem)
+
+    const handlePageChange = (pageNumber: number) => {
+        setCurrentPage(pageNumber)
+    }
+
+    const [areaList, setAreaList] = useState<any[]>([])
+    const [plantList, setPlantList] = useState<any[]>([])
+    const [lineList, setLineList] = useState<any[]>([])
+    const [processList, setProcessList] = useState<any[]>([])
+    const [machineList, setMachineList] = useState<any[]>([])
+
+
+
+    // Helper functions for cascading dropdowns
+    const loadMachineList = (areaVal: string, plantVal: string, lineVal: string, processVal: string) => {
+        getCombo({
+            data: {
+                QType: 'CBO_MACHINE',
+                CONDITION1: areaVal,
+                CONDITION2: plantVal,
+                CONDITION3: lineVal,
+                CONDITION4: processVal
+            }
+        }, {
+            onSuccess: (data: any) => {
+                if (data?.success) {
+                    setMachineList(data.data);
+                    if (data.data.length > 0) {
+                        setMachine(data.data[0].CODE || data.data[0].NAME);
+                    }
+                }
+            }
+        });
+    };
+
+    const loadProcessList = (areaVal: string, plantVal: string, lineVal: string) => {
+        getCombo({
+            data: {
+                QType: 'CBO_PROCESS',
+                CONDITION1: areaVal,
+                CONDITION2: plantVal,
+                CONDITION3: lineVal,
+                CONDITION4: ''
+            }
+        }, {
+            onSuccess: (data: any) => {
+                if (data?.success) {
+                    setProcessList(data.data);
+                    if (data.data.length > 0) {
+                        const val = data.data[0].CODE || data.data[0].NAME;
+                        setProcess(val);
+                        loadMachineList(areaVal, plantVal, lineVal, val);
+                    }
+                }
+            }
+        });
+    };
+
+    const loadLineList = (areaVal: string, plantVal: string) => {
+        getCombo({
+            data: {
+                QType: 'CBO_LINE',
+                CONDITION1: areaVal,
+                CONDITION2: plantVal,
+                CONDITION3: '',
+                CONDITION4: ''
+            }
+        }, {
+            onSuccess: (data: any) => {
+                if (data?.success) {
+                    setLineList(data.data);
+                    if (data.data.length > 0) {
+                        const val = data.data[0].CODE || data.data[0].NAME;
+                        setLine(val);
+                        loadProcessList(areaVal, plantVal, val);
+                    }
+                }
+            }
+        });
+    };
+
+    const loadPlantList = (areaVal: string) => {
+        getCombo({
+            data: {
+                QType: 'CBO_PLANT',
+                CONDITION1: areaVal,
+                CONDITION2: '',
+                CONDITION3: '',
+                CONDITION4: ''
+            }
+        }, {
+            onSuccess: (data: any) => {
+                if (data?.success) {
+                    setPlantList(data.data);
+                    if (data.data.length > 0) {
+                        const val = data.data[0].CODE || data.data[0].NAME;
+                        setPlant(val);
+                        loadLineList(areaVal, val);
+                    }
+                }
+            }
+        });
+    };
+
+    // Load Area combo on mount
+    useEffect(() => {
+        getCombo({
+            data: {
+                QType: 'CBO_FAC',
+                CONDITION1: '',
+                CONDITION2: '',
+                CONDITION3: '',
+                CONDITION4: ''
+            }
+        }, {
+            onSuccess: (data: any) => {
+                if (data?.success) {
+                    setAreaList(data.data);
+                    if (data.data.length > 0) {
+                        const val = data.data[0].CODE || data.data[0].NAME;
+                        setArea(val);
+                        loadPlantList(val);
+                    }
+                }
+            },
+            onError: (err) => {
+                console.error('Error loading area list:', err);
+            }
+        });
+    }, []);
+
+    // Load Plant combo when Area changes
+    const handleAreaChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const value = e.target.value;
+        setArea(value);
+        setPlant('');
+        setLine('');
+        setProcess('');
+        setMachine('');
+        setPlantList([]);
+        setLineList([]);
+        setProcessList([]);
+        setMachineList([]);
+
+        if (value) {
+            loadPlantList(value);
+        }
+    };
+
+    // Load Line combo when Plant changes
+    const handlePlantChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const value = e.target.value;
+        setPlant(value);
+        setLine('');
+        setProcess('');
+        setMachine('');
+        setLineList([]);
+        setProcessList([]);
+        setMachineList([]);
+
+        if (value && area) {
+            loadLineList(area, value);
+        }
+    };
+
+    // Load Process combo when Line changes
+    const handleLineChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const value = e.target.value;
+        setLine(value);
+        setProcess('');
+        setMachine('');
+        setProcessList([]);
+        setMachineList([]);
+
+        if (value && area && plant) {
+            loadProcessList(area, plant, value);
+        }
+    };
+
+    // Load Machine combo when Process changes
+    const handleProcessChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const value = e.target.value;
+        setProcess(value);
+        setMachine('');
+        setMachineList([]);
+
+        if (value && area && plant && line) {
+            loadMachineList(area, plant, line, value);
+        }
+    };
+
+    const handleSearch = () => {
+        searchHistory({
+            data: {
+                QType: 'Q',
+                YMDF: startDate ? format(startDate, 'yyyyMMdd') : '',
+                YMDT: endDate ? format(endDate, 'yyyyMMdd') : '',
+                FACTORY: area,
+                PLANT: plant,
+                LINE: line,
+                PROCESS: process,
+                MACHINE: machine
+            }
+        }, {
+            onSuccess: (data: any) => {
+                if (data?.success) {
+                    setHistoryList(data.data);
+                } else {
+                    setHistoryList([]);
+                }
+            },
+            onError: (err) => {
+                console.error('Error searching history:', err);
+                setHistoryList([]);
+            }
+        });
+    };
+
+    return (
+        <div className="history-container">
+            <div className="history-header">
+                <h1>{t('history.title')}</h1>
+                <p>{t('history.subtitle')}</p>
+
+                <div className="history-filters">
+                    <div className="filter-row">
+                        <div className="form-group">
+                            <label>{t('history.fromDate')}</label>
+                            <CustomDatePicker
+                                selected={startDate}
+                                onChange={(date) => setStartDate(date)}
+                                placeholder={language === 'vn' ? 'Chọn ngày' : 'Select date'}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label>{t('history.toDate')}</label>
+                            <CustomDatePicker
+                                selected={endDate}
+                                onChange={(date) => setEndDate(date)}
+                                placeholder={language === 'vn' ? 'Chọn ngày' : 'Select date'}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="filter-row">
+                        <div className="form-group">
+                            <label>{t('history.area')}</label>
+                            <select className="filter-select" value={area} onChange={handleAreaChange}>
+                                <option value="" hidden>{t('common.select')}</option>
+                                {areaList.length === 0 ? (
+                                    <option value="" disabled>{t('common.noOptions')}</option>
+                                ) : (
+                                    areaList.map((item, index) => (
+                                        <option key={index} value={item.CODE || item.NAME}>{item.NAME || item.CODE}</option>
+                                    ))
+                                )}
+                            </select>
+                        </div>
+                        <div className="form-group">
+                            <label>{t('temperature.plant')}</label>
+                            <select className="filter-select" value={plant} onChange={handlePlantChange}>
+                                <option value="" hidden>{t('common.select')}</option>
+                                {plantList.length === 0 ? (
+                                    <option value="" disabled>{t('common.noOptions')}</option>
+                                ) : (
+                                    plantList.map((item, index) => (
+                                        <option key={index} value={item.CODE || item.NAME}>{item.NAME || item.CODE}</option>
+                                    ))
+                                )}
+                            </select>
+                        </div>
+                        <div className="form-group">
+                            <label>{t('temperature.line')}</label>
+                            <select className="filter-select" value={line} onChange={handleLineChange}>
+                                <option value="" hidden>{t('common.select')}</option>
+                                {lineList.length === 0 ? (
+                                    <option value="" disabled>{t('common.noOptions')}</option>
+                                ) : (
+                                    lineList.map((item, index) => (
+                                        <option key={index} value={item.CODE || item.NAME}>{item.NAME || item.CODE}</option>
+                                    ))
+                                )}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div className="filter-row">
+                        <div className="form-group">
+                            <label>{t('temperature.process')}</label>
+                            <select className="filter-select" value={process} onChange={handleProcessChange}>
+                                <option value="" hidden>{t('common.select')}</option>
+                                {processList.length === 0 ? (
+                                    <option value="" disabled>{t('common.noOptions')}</option>
+                                ) : (
+                                    processList.map((item, index) => (
+                                        <option key={index} value={item.CODE || item.NAME}>{item.NAME || item.CODE}</option>
+                                    ))
+                                )}
+                            </select>
+                        </div>
+                        <div className="form-group">
+                            <label>{t('temperature.machine')}</label>
+                            <select className="filter-select" value={machine} onChange={(e) => setMachine(e.target.value)}>
+                                <option value="" hidden>{t('common.select')}</option>
+                                {machineList.length === 0 ? (
+                                    <option value="" disabled>{t('common.noOptions')}</option>
+                                ) : (
+                                    machineList.map((item, index) => (
+                                        <option key={index} value={item.CODE || item.NAME}>{item.NAME || item.CODE}</option>
+                                    ))
+                                )}
+                            </select>
+                        </div>
+                        <div className="form-group filter-button-group">
+                            <button className="filter-button" onClick={handleSearch} disabled={isSearching}>
+                                {isSearching ? t('common.searching') : t('common.search')}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="history-table-container">
+                {/* View Mode Toggle - Mobile Only */}
+                <div className="view-mode-toggle mobile-only">
+                    <button
+                        className={`view-mode-btn ${viewMode === 'grid' ? 'active' : ''}`}
+                        onClick={() => setViewMode('grid')}
+                        title="Grid View"
+                    >
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <rect x="3" y="3" width="7" height="7" />
+                            <rect x="14" y="3" width="7" height="7" />
+                            <rect x="3" y="14" width="7" height="7" />
+                            <rect x="14" y="14" width="7" height="7" />
+                        </svg>
+                    </button>
+                    <button
+                        className={`view-mode-btn ${viewMode === 'card' ? 'active' : ''}`}
+                        onClick={() => setViewMode('card')}
+                        title="Card View"
+                    >
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <rect x="3" y="3" width="18" height="8" rx="2" />
+                            <rect x="3" y="13" width="18" height="8" rx="2" />
+                        </svg>
+                    </button>
+                </div>
+
+                {/* Desktop Table View + Mobile Grid View */}
+                <table className={`history-table ${viewMode === 'card' ? 'hide-on-mobile' : ''}`}>
+                    <thead>
+                        <tr>
+                            <th rowSpan={2} style={{ minWidth: '80px', maxWidth: '80px' }}>{t('history.date')}</th>
+                            <th rowSpan={2}>{t('history.inspector')}</th>
+                            <th rowSpan={2}>{t('history.area')}</th>
+                            <th rowSpan={2}>{t('history.machine')}</th>
+                            <th rowSpan={2}>{t('history.type')}</th>
+                            <th colSpan={4} style={{ textAlign: 'center' }}>{t('history.lower')}</th>
+                            <th colSpan={4} style={{ textAlign: 'center' }}>{t('history.middle')}</th>
+                            <th colSpan={4} style={{ textAlign: 'center' }}>{t('history.upper')}</th>
+                        </tr>
+                        <tr>
+                            {/* Lower Sub-columns */}
+                            <th style={{ minWidth: '60px' }}>{t('history.lr')}</th>
+                            <th>{t('history.temperature')}</th>
+                            <th>{t('history.status')}</th>
+                            <th>{t('history.issue')}</th>
+                            {/* Middle Sub-columns */}
+                            <th style={{ minWidth: '60px' }}>{t('history.lr')}</th>
+                            <th>{t('history.temperature')}</th>
+                            <th>{t('history.status')}</th>
+                            <th>{t('history.issue')}</th>
+                            {/* Upper Sub-columns */}
+                            <th style={{ minWidth: '60px' }}>{t('history.lr')}</th>
+                            <th>{t('history.temperature')}</th>
+                            <th>{t('history.status')}</th>
+                            <th>{t('history.issue')}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {pivotedRows.length === 0 ? (
+                            <tr>
+                                <td colSpan={17} style={{ textAlign: 'center', padding: '20px' }}>{t('history.noData')}</td>
+                            </tr>
+                        ) : (
+                            visibleRows.map((row, idx) => (
+                                <tr key={idx}>
+                                    <td>
+                                        <div>{row.YMD ? row.YMD.toString().split(' ')[0] : ''}</div>
+                                        <div style={{ color: '#6b7280' }}>
+                                            {row.HMS ? row.HMS : (row.YMD && row.YMD.toString().includes(' ') ? row.YMD.toString().split(' ')[1] : '')}
+                                        </div>
+                                    </td>
+                                    <td>{row.EMP_NM}</td>
+                                    <td>{row.CMMS_LOC_NM}</td>
+                                    <td>{row.MACH_ID}</td>
+                                    <td>{row.MODEL_NM}</td>
+
+                                    {/* Lower */}
+                                    <td>{row.lower ? row.isRow : ''}</td>
+                                    <td>
+                                        {row.lower && <span className="temperature-badge">{row.lower.CHECK_VALUES}</span>}
+                                    </td>
+                                    <td>
+                                        {row.lower && (
+                                            <span className={`status-badge ${row.lower.CHECK_STATUS === 'Pass' ? 'completed' : 'failed'}`}>
+                                                {row.lower.CHECK_STATUS}
+                                            </span>
+                                        )}
+                                    </td>
+                                    <td>{row.lower?.ISSUE}</td>
+
+                                    {/* Middle */}
+                                    <td>{row.middle ? row.isRow : ''}</td>
+                                    <td>
+                                        {row.middle && <span className="temperature-badge">{row.middle.CHECK_VALUES}</span>}
+                                    </td>
+                                    <td>
+                                        {row.middle && (
+                                            <span className={`status-badge ${row.middle.CHECK_STATUS === 'Pass' ? 'completed' : 'failed'}`}>
+                                                {row.middle.CHECK_STATUS}
+                                            </span>
+                                        )}
+                                    </td>
+                                    <td>{row.middle?.ISSUE}</td>
+
+                                    {/* Upper */}
+                                    <td>{row.upper ? row.isRow : ''}</td>
+                                    <td>
+                                        {row.upper && <span className="temperature-badge">{row.upper.CHECK_VALUES}</span>}
+                                    </td>
+                                    <td>
+                                        {row.upper && (
+                                            <span className={`status-badge ${row.upper.CHECK_STATUS === 'Pass' ? 'completed' : 'failed'}`}>
+                                                {row.upper.CHECK_STATUS}
+                                            </span>
+                                        )}
+                                    </td>
+                                    <td>{row.upper?.ISSUE}</td>
+                                </tr>
+                            ))
+                        )}
+                    </tbody>
+                </table>
+
+                {/* Mobile Card View */}
+                {viewMode === 'card' && (
+                    <div className="mobile-cards mobile-only">
+                        {historyList.length === 0 ? (
+                            <div className="no-data-card">{t('history.noData')}</div>
+                        ) : (
+                            historyList.slice(indexOfFirstItem, indexOfLastItem).map((record, index) => (
+                                <div className="history-card" key={index}>
+                                    {/* Card Header */}
+                                    <div className="card-header">
+                                        <div className="card-header-left">
+                                            <div className="inspector-avatar">
+                                                {record.EMP_NM?.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase() || 'NA'}
+                                            </div>
+                                            <div className="inspector-info">
+                                                <div className="inspector-name">{record.EMP_NM}</div>
+                                                <div className="check-datetime">
+                                                    <svg className="datetime-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                        <circle cx="12" cy="12" r="10" />
+                                                        <polyline points="12,6 12,12 16,14" />
+                                                    </svg>
+                                                    {record.YMD} • {record.HMS}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Card Body - Machine */}
+                                    <div className="card-info-section">
+                                        <div className="info-header">
+                                            <svg className="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                <circle cx="12" cy="12" r="3" />
+                                                <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+                                            </svg>
+                                            <span className="info-label">{t('history.machine')}</span>
+                                        </div>
+                                        <div className="info-value machine-value">{record.MACH_ID}</div>
+                                    </div>
+
+                                    {/* Card Body - Area */}
+                                    <div className="card-info-section">
+                                        <div className="info-header">
+                                            <svg className="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                                                <circle cx="12" cy="10" r="3" />
+                                            </svg>
+                                            <span className="info-label">{t('history.area')}</span>
+                                        </div>
+                                        <div className="info-value">{record.CMMS_LOC_NM}</div>
+                                    </div>
+
+                                    {/* Card Footer */}
+                                    <div className="card-footer">
+                                        <div className="footer-left">
+                                            <div className="footer-label">{t('history.position')}</div>
+                                            <div className="footer-value">
+                                                <span className="position-type">{record.MODEL_NM}</span>
+                                                <span className="position-detail">{record.LOCATE} ({record.DIV})</span>
+                                            </div>
+                                            {record.ISSUE && (
+                                                <div className="issue-wrapper" style={{ marginTop: '8px' }}>
+                                                    <div className="footer-label">{t('history.issue')}</div>
+                                                    <div className="issue-value">{record.ISSUE}</div>
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div className="footer-right">
+                                            <div className="footer-label">{t('history.temperature')}</div>
+                                            <div className="temperature-value">{record.CHECK_VALUES}°C</div>
+                                            <span className={`status-badge ${record.CHECK_STATUS === 'Pass' ? 'completed' : 'failed'}`} style={{ marginTop: '4px', alignSelf: 'flex-end' }}>
+                                                {record.CHECK_STATUS}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                )}
+
+            </div>
+
+            {/* Pagination Controls */}
+            {pivotedRows.length > 0 && (
+                <div className="pagination-container">
+                    <div className="pagination-info">
+                        Showing {indexOfFirstItem + 1} to {Math.min(indexOfLastItem, pivotedRows.length)} of {pivotedRows.length} entries
+                    </div>
+                    <div className="pagination-controls">
+                        {/* First Page */}
+                        <button
+                            className="pagination-button"
+                            onClick={() => handlePageChange(1)}
+                            disabled={currentPage === 1}
+                            title={t('common.firstPage') || 'First Page'}
+                        >
+                            &laquo;
+                        </button>
+                        {/* Previous Page */}
+                        <button
+                            className="pagination-button"
+                            onClick={() => handlePageChange(currentPage - 1)}
+                            disabled={currentPage === 1}
+                            title={t('common.prevPage') || 'Previous Page'}
+                        >
+                            &lt;
+                        </button>
+
+                        {/* Page Numbers */}
+                        {(() => {
+                            const maxPagesToShow = 3;
+                            let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
+                            let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+
+                            if (endPage - startPage + 1 < maxPagesToShow) {
+                                startPage = Math.max(1, endPage - maxPagesToShow + 1);
+                            }
+
+                            return Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i).map((page) => (
+                                <button
+                                    key={page}
+                                    className={`pagination-button ${currentPage === page ? 'active' : ''}`}
+                                    onClick={() => handlePageChange(page)}
+                                >
+                                    {page}
+                                </button>
+                            ));
+                        })()}
+
+                        {/* Next Page */}
+                        <button
+                            className="pagination-button"
+                            onClick={() => handlePageChange(currentPage + 1)}
+                            disabled={currentPage === totalPages}
+                            title={t('common.nextPage') || 'Next Page'}
+                        >
+                            &gt;
+                        </button>
+                        {/* Last Page */}
+                        <button
+                            className="pagination-button"
+                            onClick={() => handlePageChange(totalPages)}
+                            disabled={currentPage === totalPages}
+                            title={t('common.lastPage') || 'Last Page'}
+                        >
+                            &raquo;
+                        </button>
+
+                        {/* Go to Page Input */}
+                        <div className="pagination-input-group">
+                            <input
+                                type="number"
+                                min="1"
+                                max={totalPages}
+                                className="pagination-input"
+                                placeholder="Go to"
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                        const val = parseInt(e.currentTarget.value);
+                                        if (!isNaN(val) && val >= 1 && val <= totalPages) {
+                                            handlePageChange(val);
+                                            e.currentTarget.value = ''; // Optional: clear after go
+                                        }
+                                    }
+                                }}
+                            />
+                        </div>
+                    </div>
+                </div>
+            )}
+        </div>
+    )
+}
+
+export default History

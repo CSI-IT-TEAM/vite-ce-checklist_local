@@ -1,0 +1,156 @@
+.remark-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.remark-popup-content {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.remark-popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.remark-popup-header h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 700;
+    color: #1a2332;
+}
+
+.remark-popup-close {
+    background: none;
+    border: none;
+    font-size: 28px;
+    color: #6b7280;
+    cursor: pointer;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.remark-popup-close:hover {
+    background: #f3f4f6;
+    color: #1a2332;
+}
+
+.remark-popup-subtitle {
+    font-size: 14px;
+    color: #6b7280;
+    margin: 0 0 20px 0;
+}
+
+.remark-popup-body {
+    margin-bottom: 24px;
+}
+
+.remark-popup-form-group {
+    margin-bottom: 20px;
+}
+
+.remark-popup-form-group:last-child {
+    margin-bottom: 0;
+}
+
+.remark-popup-form-group label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 8px;
+}
+
+.remark-popup-textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #374151;
+    transition: all 0.2s;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 80px;
+}
+
+.remark-popup-textarea:focus {
+    outline: none;
+    border-color: #4F46E5;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.remark-popup-footer {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+.remark-popup-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.remark-popup-btn-save {
+    background: #10b981;
+    color: white;
+}
+
+.remark-popup-btn-save:hover {
+    background: #059669;
+}
+
+.remark-popup-btn-cancel {
+    background: #ef4444;
+    color: white;
+}
+
+.remark-popup-btn-cancel:hover {
+    background: #dc2626;
+}
+
+@media (max-width: 640px) {
+    .remark-popup-content {
+        width: 95%;
+        padding: 20px;
+    }
+
+    .remark-popup-header h2 {
+        font-size: 18px;
+    }
+
+    .remark-popup-footer {
+        flex-direction: column;
+    }
+
+    .remark-popup-btn {
+        width: 100%;
+    }
+}
