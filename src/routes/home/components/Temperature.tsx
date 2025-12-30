@@ -217,23 +217,31 @@ const Temperature = ({ userData: propUserData }: TemperatureProps) => {
         )
 
         if (machineData) {
-            // Update checkItems with setting values from machine data
+            // Update checkItems with setting and display values from machine data
             setCheckItems(items => items.map(item => {
                 let leftSetting = '';
                 let rightSetting = '';
+                let leftDisplay = '';
+                let rightDisplay = '';
 
                 if (item.id === 1) {
                     // Lower
                     leftSetting = machineData.LOWER_SETTING_L != null ? String(machineData.LOWER_SETTING_L) : '';
                     rightSetting = machineData.LOWER_SETTING_R != null ? String(machineData.LOWER_SETTING_R) : '';
+                    leftDisplay = machineData.LOWER_DISPLAY_L != null ? String(machineData.LOWER_DISPLAY_L) : '';
+                    rightDisplay = machineData.LOWER_DISPLAY_R != null ? String(machineData.LOWER_DISPLAY_R) : '';
                 } else if (item.id === 2) {
                     // Middle
                     leftSetting = machineData.MIDDLE_SETTING_L != null ? String(machineData.MIDDLE_SETTING_L) : '';
                     rightSetting = machineData.MIDDLE_SETTING_R != null ? String(machineData.MIDDLE_SETTING_R) : '';
+                    leftDisplay = machineData.MIDDLE_DISPLAY_L != null ? String(machineData.MIDDLE_DISPLAY_L) : '';
+                    rightDisplay = machineData.MIDDLE_DISPLAY_R != null ? String(machineData.MIDDLE_DISPLAY_R) : '';
                 } else if (item.id === 3) {
                     // Upper
                     leftSetting = machineData.UPPER_SETTING_L != null ? String(machineData.UPPER_SETTING_L) : '';
                     rightSetting = machineData.UPPER_SETTING_R != null ? String(machineData.UPPER_SETTING_R) : '';
+                    leftDisplay = machineData.UPPER_DISPLAY_L != null ? String(machineData.UPPER_DISPLAY_L) : '';
+                    rightDisplay = machineData.UPPER_DISPLAY_R != null ? String(machineData.UPPER_DISPLAY_R) : '';
                 }
 
                 return {
@@ -241,12 +249,12 @@ const Temperature = ({ userData: propUserData }: TemperatureProps) => {
                     left: {
                         ...item.left,
                         settingValue: leftSetting,
-                        displayValue: leftSetting
+                        displayValue: leftDisplay
                     },
                     right: {
                         ...item.right,
                         settingValue: rightSetting,
-                        displayValue: rightSetting
+                        displayValue: rightDisplay
                     }
                 };
             }));
@@ -493,23 +501,31 @@ const Temperature = ({ userData: propUserData }: TemperatureProps) => {
                     setProcess(info.LOC_CD);
                     setMachine(info.MC_CODE);
 
-                    // Set setting values from QR data
+                    // Set setting and display values from QR data
                     setCheckItems(items => items.map(item => {
                         let leftSetting = '';
                         let rightSetting = '';
+                        let leftDisplay = '';
+                        let rightDisplay = '';
 
                         if (item.id === 1) {
                             // Lower
                             leftSetting = info.LOWER_SETTING_L != null ? String(info.LOWER_SETTING_L) : '';
                             rightSetting = info.LOWER_SETTING_R != null ? String(info.LOWER_SETTING_R) : '';
+                            leftDisplay = info.LOWER_DISPLAY_L != null ? String(info.LOWER_DISPLAY_L) : '';
+                            rightDisplay = info.LOWER_DISPLAY_R != null ? String(info.LOWER_DISPLAY_R) : '';
                         } else if (item.id === 2) {
                             // Middle
                             leftSetting = info.MIDDLE_SETTING_L != null ? String(info.MIDDLE_SETTING_L) : '';
                             rightSetting = info.MIDDLE_SETTING_R != null ? String(info.MIDDLE_SETTING_R) : '';
+                            leftDisplay = info.MIDDLE_DISPLAY_L != null ? String(info.MIDDLE_DISPLAY_L) : '';
+                            rightDisplay = info.MIDDLE_DISPLAY_R != null ? String(info.MIDDLE_DISPLAY_R) : '';
                         } else if (item.id === 3) {
                             // Upper
                             leftSetting = info.UPPER_SETTING_L != null ? String(info.UPPER_SETTING_L) : '';
                             rightSetting = info.UPPER_SETTING_R != null ? String(info.UPPER_SETTING_R) : '';
+                            leftDisplay = info.UPPER_DISPLAY_L != null ? String(info.UPPER_DISPLAY_L) : '';
+                            rightDisplay = info.UPPER_DISPLAY_R != null ? String(info.UPPER_DISPLAY_R) : '';
                         }
 
                         return {
@@ -517,12 +533,12 @@ const Temperature = ({ userData: propUserData }: TemperatureProps) => {
                             left: {
                                 ...item.left,
                                 settingValue: leftSetting,
-                                displayValue: leftSetting
+                                displayValue: leftDisplay
                             },
                             right: {
                                 ...item.right,
                                 settingValue: rightSetting,
-                                displayValue: rightSetting
+                                displayValue: rightDisplay
                             }
                         };
                     }));
