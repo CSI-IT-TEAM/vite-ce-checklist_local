@@ -2,14 +2,14 @@ import * as React from "react";
 import { Box } from "@mui/material";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 
-import ReactQrScanner from "./ReactQrScanner";
+import Html5QrScanner from "./Html5QrScanner";
 import "./CameraScan.scss";
 
 /* -------------------- Types -------------------- */
 
 export interface CameraScanProps {
     open: boolean;
-    handleSuccess: (decodedText: string, decodedResult?: any) => void;
+    handleSuccess: (decodedText: string, decodedResult?: unknown) => void;
     handleClose: () => void;
 }
 
@@ -58,7 +58,7 @@ const CameraScan: React.FC<CameraScanProps> = ({
                     <CloseRoundedIcon sx={{ fontSize: 20, color: '#fff' }} />
                 </Box>
 
-                <ReactQrScanner onSuccess={handleSuccess} />
+                <Html5QrScanner onSuccess={handleSuccess} />
             </Box>
         </Box>
     );

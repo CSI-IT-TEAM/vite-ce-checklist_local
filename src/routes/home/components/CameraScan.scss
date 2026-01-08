@@ -1,3 +1,4 @@
+/* Cleaned up CameraScan.scss to avoid conflicts */
 .s-camera {
     position: fixed;
     z-index: 9999;
@@ -21,7 +22,7 @@
         justify-content: center;
         top: 0;
         right: 0;
-        z-index: 9;
+        z-index: 101; /* Higher than scanner overlay */
         color: #fff;
         cursor: pointer;
         transition: background 0.2s;
@@ -32,152 +33,20 @@
     }
 
     &-content {
-        background: #fff;
-        border-radius: 10px;
+        background: #000; /* Match scanner background */
+        border-radius: 16px;
         overflow: hidden;
-        padding: 8px;
+        padding: 0; /* No padding to let scanner fill */
         position: relative;
         max-width: 95vw;
-
-        // Style for the camera select dropdown
-        select {
-            padding: 6px 10px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 13px;
-            margin-top: 4px;
-        }
-
-        // Style for the Stop Scanning button
-        button {
-            padding: 10px 20px;
-            font-size: 14px;
-            font-weight: 600;
-            border-radius: 25px;
-            border-width: 0;
-            background-color: #4F46E5;
-            color: #fff;
-            margin: 6px 0px 2px;
-            cursor: pointer;
-            transition: background 0.2s, transform 0.1s;
-
-            &:hover {
-                background-color: #4338CA;
-            }
-
-            &:active {
-                transform: scale(0.98);
-            }
-        }
+        width: 100%;
+        display: flex; /* Ensure proper centering if needed */
+        justify-content: center;
+        align-items: center;
     }
 }
 
+/* Hide unused elements if they accidentally appear */
 .s-camera--close {
     display: none;
-}
-
-/* ================== html5-qrcode library overrides ================== */
-
-// Hide scan type switcher only (not camera permission button)
-#html5-qrcode-anchor-scan-type-change {
-    display: none !important;
-}
-
-// QR reader container
-[id^="html5qr-code-"] {
-
-    // Reduce spacing
-    #html5-qrcode-button-camera-start,
-    #html5-qrcode-button-camera-stop {
-        margin: 4px 0 !important;
-        padding: 10px 20px !important;
-    }
-
-    // Camera selection row - make compact
-    #html5qr-code-full-region__scan_region {
-        padding: 0 !important;
-
-        // Video element
-        video {
-            border-radius: 8px;
-        }
-    }
-
-    // Header text "Scanning..."
-    #html5-qrcode-anchor-scan-type-change {
-        display: none !important;
-    }
-
-    // Camera select section
-    #html5qr-code-full-region__dashboard_section {
-        padding: 4px 0 !important;
-
-        #html5qr-code-full-region__dashboard_section_csr {
-
-            // Camera select row
-            &>span {
-                font-size: 13px !important;
-            }
-
-            select {
-                margin-left: 6px !important;
-                font-size: 13px !important;
-            }
-        }
-    }
-
-    // Bottom controls
-    #html5qr-code-full-region__dashboard_section_swaplink {
-        display: none !important;
-    }
-}
-
-// Make the scanning region more compact
-#html5qr-code-full-region {
-    border: none !important;
-
-    img {
-        display: none !important;
-    }
-}
-
-// Hide the shaded region completely for clean camera view
-#qr-shaded-region {
-    display: none !important;
-}
-
-// Mobile specific adjustments
-@media (max-width: 768px) {
-    .s-camera-content {
-        padding: 6px !important;
-        margin: 10px;
-        max-width: calc(100vw - 20px);
-        width: calc(100vw - 20px);
-    }
-
-    [id^="html5qr-code-"] {
-        width: 100% !important;
-
-        #html5qr-code-full-region__scan_region {
-            width: 100% !important;
-            overflow: hidden !important;
-            border-radius: 8px;
-            height: 35vh !important;
-            max-height: 35vh !important;
-
-            video {
-                width: 100% !important;
-                height: 35vh !important;
-                max-height: 35vh !important;
-                object-fit: cover !important;
-                border-radius: 8px;
-            }
-        }
-
-        // Dashboard section compact
-        #html5qr-code-full-region__dashboard_section {
-            padding: 6px 0 4px !important;
-            text-align: center;
-        }
-    }
 }

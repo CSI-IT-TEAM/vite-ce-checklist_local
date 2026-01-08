@@ -490,10 +490,10 @@ const Temperature = ({ userData: propUserData }: TemperatureProps) => {
 
             try {
                 const qrResult = await getComboData('QR_INFOR', { condition1: decodedText });
-
+                    
                 if (qrResult?.success && qrResult?.data?.OUT_CURSOR && qrResult.data.OUT_CURSOR.length > 0) {
                     const info = qrResult.data.OUT_CURSOR[0];
-
+                    console.log('QR Data:', qrResult);
                     // Set values
                     setArea(info.FAC_CD);
                     setPlant(info.PLANT_CD);

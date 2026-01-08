@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [react(), basicSsl()],
   server: {
     host: true,   // hoặc '0.0.0.0'
-    port: 3000,
+    port: 5173,
     proxy: {
       '/api': {
         target: 'https://vjweb.dskorea.com:9091',
