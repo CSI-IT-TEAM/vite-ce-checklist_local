@@ -8,6 +8,14 @@ export default defineConfig({
   server: {
     host: true,   // hoặc '0.0.0.0'
     port: 3000,
+    proxy: {
+      '/api': {
+        target: 'https://vjweb.dskorea.com:9091',
+        changeOrigin: true,
+        secure: false,
+      }
+    }
   },
 })
+
 

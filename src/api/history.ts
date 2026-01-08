@@ -1,3 +1,5 @@
+import { callProcedureAPI } from './base';
+import { DB_CONFIG, PACKAGE_NAMES } from './config';
 import { decodeBase64 } from './helpers';
 
 // ============ HISTORY DATA API ============
@@ -13,25 +15,30 @@ export interface HistoryParams {
     machine: string;    // Machine
 }
 
+export interface HistoryItem {
+    ISSUE?: string;
+    [key: string]: any;
+}
+
 export interface HistoryResponse {
     success: boolean;
     message?: string;
     data?: {
-        OUT_CURSOR?: any[];
+        OUT_CURSOR?: HistoryItem[];
     };
 }
 
 /**
  * Lấy dữ liệu lịch sử sử dụng PKG_CE_CHECKLIST_WEB.GET_DATA_HISTORY
+ * Tự động decode ISSUE từ base64
+ * @param params - Các tham số tìm kiếm
  */
 export const getHistoryData = async (
     params: HistoryParams
 ): Promise<HistoryResponse> => {
-    const endpoint = "https://vjweb.dskorea.com:9091/api/call-procedure";
-
     const payload = {
-        dbName: "LMES",
-        packageName: "PKG_CE_CHECKLIST_WEB",
+        dbName: DB_CONFIG.DB_NAME,
+        packageName: PACKAGE_NAMES.CE_CHECKLIST_WEB,
         procedureName: "GET_DATA_HISTORY",
         params: {
             ARG_QTYPE: {
@@ -74,31 +81,18 @@ export const getHistoryData = async (
     };
 
     try {
-        const res = await fetch(endpoint, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                accept: "application/json"
-            },
-            body: JSON.stringify(payload),
-        });
-
-        if (!res.ok) {
-            return { success: false, message: `HTTP ERROR ${res.status}` };
-        }
-
-        const result = await res.json();
+        const result = await callProcedureAPI<{ OUT_CURSOR?: HistoryItem[] }>(payload);
 
         // Decode ISSUE from base64 nếu có
         if (result?.success && result?.data?.OUT_CURSOR) {
-            result.data.OUT_CURSOR = result.data.OUT_CURSOR.map((item: any) => ({
+            result.data.OUT_CURSOR = result.data.OUT_CURSOR.map((item) => ({
                 ...item,
                 // Decode ISSUE từ base64 nếu có
                 ISSUE: item.ISSUE ? decodeBase64(item.ISSUE) : ''
             }));
         }
 
-        return result as HistoryResponse;
+        return result;
     } catch (error: any) {
         console.error('History error:', error);
         return { success: false, message: error.message || "Network error" };

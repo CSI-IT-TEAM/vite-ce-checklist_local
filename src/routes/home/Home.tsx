@@ -42,13 +42,9 @@ const Home = () => {
     // Dùng nameEng thay vì userName vì tên tiếng Việt bị lỗi encoding VNI
     const fallbackAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.nameEng || user?.NAME_ENG || 'User')}&background=4F46E5&color=fff`
 
-    // Convert photo URL từ HTTP sang HTTPS để tránh mixed content
+    // Return photo URL directly (using HTTP 9090)
     const getPhotoUrl = (photoUrl: string | undefined): string => {
         if (!photoUrl) return fallbackAvatar
-        // Chuyển http://vjweb.dskorea.com:9090/... sang https://vjweb.dskorea.com:9091/...
-        if (photoUrl.startsWith('http://vjweb.dskorea.com:9090/')) {
-            return photoUrl.replace('http://vjweb.dskorea.com:9090/', 'https://vjweb.dskorea.com:9091/')
-        }
         return photoUrl
     }
 

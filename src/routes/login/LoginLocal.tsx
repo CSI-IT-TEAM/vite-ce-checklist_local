@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { getEmployeeInfo } from '../../api'
 import './Login.css'
 
 const LoginLocal = () => {
@@ -42,27 +43,8 @@ const LoginLocal = () => {
         setIsPending(true)
 
         try {
-            // Gọi API login trực tiếp (HTTPS)
-            const response = await fetch('https://vjweb.dskorea.com:9091/api/common/employee-info', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'accept': 'application/json'
-                },
-                body: JSON.stringify({
-                    serviceId: "VJ",
-                    langCd: "ENG",
-                    empId: cardNumber
-                })
-            })
-
-            if (!response.ok) {
-                setError(`HTTP Error: ${response.status}`)
-                setIsPending(false)
-                return
-            }
-
-            const result = await response.json()
+            // Sử dụng API function từ thư mục api
+            const result = await getEmployeeInfo(cardNumber)
 
             // Server trả về lỗi
             if (!result.success) {
@@ -72,7 +54,6 @@ const LoginLocal = () => {
             }
 
             // Kiểm tra xem có dữ liệu employee không
-            // API trả về: result.data.OUT_CURSOR[0]
             const employees = result.data?.OUT_CURSOR
             if (!employees || employees.length === 0) {
                 setError("Không tìm thấy thông tin nhân viên.")
@@ -92,7 +73,7 @@ const LoginLocal = () => {
                 localStorage.removeItem('rememberMe')
             }
 
-            // Lưu user data vào localStorage (format tương thích với Login.tsx)
+            // Lưu user data vào localStorage
             const userData = {
                 userID: employeeData.EMP_ID,
                 userName: employeeData.EMP_NAME,

@@ -1,3 +1,6 @@
+import { callProcedureAPI } from './base';
+import { DB_CONFIG, PACKAGE_NAMES } from './config';
+
 // ============ COMBO DATA API ============
 
 export type ComboType =
@@ -31,16 +34,16 @@ export interface ComboParams {
 
 /**
  * Lấy dữ liệu combo sử dụng PKG_CE_CHECKLIST_WEB.SELECT_COMBO
+ * @param comboType - Loại combo cần lấy
+ * @param params - Các điều kiện lọc
  */
 export const getComboData = async (
     comboType: ComboType,
     params?: ComboParams
 ): Promise<ComboResponse> => {
-    const endpoint = "https://vjweb.dskorea.com:9091/api/call-procedure";
-
     const payload = {
-        dbName: "LMES",
-        packageName: "PKG_CE_CHECKLIST_WEB",
+        dbName: DB_CONFIG.DB_NAME,
+        packageName: PACKAGE_NAMES.CE_CHECKLIST_WEB,
         procedureName: "SELECT_COMBO",
         params: {
             ARG_QTYPE: {
@@ -70,22 +73,5 @@ export const getComboData = async (
         }
     };
 
-    try {
-        const res = await fetch(endpoint, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                accept: "application/json"
-            },
-            body: JSON.stringify(payload),
-        });
-
-        if (!res.ok) {
-            return { success: false, message: `HTTP ERROR ${res.status}` };
-        }
-
-        return (await res.json()) as ComboResponse;
-    } catch (error: any) {
-        return { success: false, message: error.message || "Network error" };
-    }
+    return callProcedureAPI(payload);
 };
