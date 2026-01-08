@@ -114,9 +114,9 @@ const Html5QrcodePlugin: React.FC<Html5QrcodePluginProps> = (props) => {
         overflow: 'hidden'
       }}
     >
-      <div id={regionId} style={{ width: '100%' }} />
+      <div id={regionId} style={{ width: '100%', height: '100%' }} />
 
-      {/* Hiệu ứng tia laser khi đang quét */}
+      {/* Chỉ giữ lại hiệu ứng tia laser xanh chuyên nghiệp */}
       {internalIsScanning && (
         <div className="scanner-laser">
           <div className="laser-line" />
@@ -143,28 +143,36 @@ const Html5QrcodePlugin: React.FC<Html5QrcodePluginProps> = (props) => {
           display: block !important;
           object-fit: cover !important;
         }
+        
+        /* Loại bỏ hoàn toàn các khung viền mặc định của thư viện */
+        #${regionId} > div > div {
+          border: none !important;
+        }
+
         .scanner-laser {
           position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: ${typeof props.qrbox === 'number' ? props.qrbox : 150}px;
+          height: ${typeof props.qrbox === 'number' ? props.qrbox : 150}px;
           pointer-events: none;
           z-index: 2;
         }
         .laser-line {
           position: absolute;
           width: 100%;
-          height: 2px;
-          background: rgba(255, 0, 0, 0.6);
-          box-shadow: 0 0 8px 2px rgba(255, 0, 0, 0.8);
-          top: 10%;
-          animation: scan 2s linear infinite;
+          height: 3px;
+          background: linear-gradient(to right, transparent, #00ff00, #00ff00, transparent);
+          box-shadow: 0 0 15px 3px rgba(0, 255, 0, 0.6);
+          top: 0;
+          animation: scan 2s ease-in-out infinite;
         }
         @keyframes scan {
-          0% { top: 10%; }
-          50% { top: 90%; }
-          100% { top: 10%; }
+          0% { top: 0; opacity: 0; }
+          15% { opacity: 1; }
+          85% { opacity: 1; }
+          100% { top: 100%; opacity: 0; }
         }
       `}</style>
     </div>

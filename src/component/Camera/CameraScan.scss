@@ -44,12 +44,15 @@
     &-body {
         position: relative;
         background: #000;
-        width: 100%;
+        width: calc(100% - 24px); // Tăng diện tích hiển thị một chút
+        margin: 0 auto 12px auto; // Thêm margin bottom để thoáng hơn với footer
         aspect-ratio: 1 / 1;
         display: flex;
         align-items: center;
         justify-content: center;
         overflow: hidden;
+        border-radius: 24px; // Bo tròn 4 góc camera mạnh hơn
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     }
 
     &-footer {
