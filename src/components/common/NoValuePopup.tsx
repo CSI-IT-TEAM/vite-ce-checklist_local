@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import './NoValuePopup.css'
-import { useTranslation } from '../../../contexts/LanguageContext'
+import { useTranslation } from '../../contexts/LanguageContext'
 
 interface NoValuePopupProps {
     isOpen: boolean

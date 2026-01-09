@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import './RemarkPopup.css'
-import { useTranslation } from '../../../contexts/LanguageContext'
+import { useTranslation } from '../../contexts/LanguageContext'
 
 interface RemarkPopupProps {
     isOpen: boolean

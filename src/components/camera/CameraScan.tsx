@@ -4,7 +4,7 @@ import PlayArrowRoundedIcon from '@mui/icons-material/PlayArrowRounded';
 import StopRoundedIcon from '@mui/icons-material/StopRounded';
 import RefreshRoundedIcon from '@mui/icons-material/RefreshRounded';
 import CameraAltRoundedIcon from '@mui/icons-material/CameraAltRounded';
-import Html5QrcodePlugin from '../CameraPlugin/Html5QrcodePlugin';
+import Html5QrcodePlugin from './Html5QrcodePlugin';
 import { useState, useCallback, useEffect } from 'react';
 
 import './CameraScan.scss';

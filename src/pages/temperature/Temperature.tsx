@@ -1,12 +1,12 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import './Temperature.css'
 import { QrCode } from 'lucide-react'
-import { getComboData, saveChecklistData } from '../../../api'
-import CameraScan from '../../../component/Camera/CameraScan'
-import RemarkPopup from './RemarkPopup'
-import { isNullOrEmpty } from '../../../funtions/is-empty'
-import { useTranslation } from '../../../contexts/LanguageContext'
-import CustomDatePicker from '../../../component/ui/CustomDatePicker'
+import { getComboData, saveChecklistData } from '../../api'
+import CameraScan from '../../components/camera/CameraScan'
+import RemarkPopup from '../../components/common/RemarkPopup'
+import { isNullOrEmpty } from '../../utils/is-empty'
+import { useTranslation } from '../../contexts/LanguageContext'
+import CustomDatePicker from '../../components/common/CustomDatePicker'
 
 interface CheckPosition {
     settingValue: string
@@ -388,6 +388,20 @@ const Temperature = ({ userData: propUserData }: TemperatureProps) => {
     };
 
     const resetForm = () => {
+        // Reset tất cả combo boxes về trạng thái ban đầu
+        setArea('')
+        setPlant('')
+        setLine('')
+        setProcess('')
+        setMachine('')
+
+        // Reset các danh sách combo (giữ lại areaList vì đã load từ đầu)
+        setPlantList([])
+        setLineList([])
+        setProcessList([])
+        setMachineList([])
+
+        // Reset các ô nhập liệu
         setCheckItems(items => items.map(item => ({
             ...item,
             left: createInitialPosition(),
@@ -781,7 +795,7 @@ const Temperature = ({ userData: propUserData }: TemperatureProps) => {
                                         };
 
                                         return (
-                                            <>
+                                            <React.Fragment key={item.id}>
                                                 {/* Row 1: Left */}
                                                 <tr key={`${item.id}-left`}>
                                                     <td rowSpan={2} className="item-content">
@@ -859,7 +873,7 @@ const Temperature = ({ userData: propUserData }: TemperatureProps) => {
                                                     </td>
                                                 </tr>
 
-                                            </>
+                                            </React.Fragment>
                                         );
                                     })}
                             </tbody>

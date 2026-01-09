@@ -1,8 +1,8 @@
 import { useState, useEffect, useMemo } from 'react'
 import './History.css'
-import { getComboData, getHistoryData } from '../../../api'
-import { useTranslation } from '../../../contexts/LanguageContext'
-import CustomDatePicker from '../../../component/ui/CustomDatePicker'
+import { getComboData, getHistoryData } from '../../api'
+import { useTranslation } from '../../contexts/LanguageContext'
+import CustomDatePicker from '../../components/common/CustomDatePicker'
 import { format } from 'date-fns'
 
 const History = () => {

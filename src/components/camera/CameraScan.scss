@@ -12,6 +12,8 @@
     overscroll-behavior: contain;
     backdrop-filter: blur(4px);
     transition: all 0.3s ease;
+    padding: 30px 20px; // Thêm padding để popup không sát mép
+    box-sizing: border-box;
 
     &-content {
         background: #fff;
@@ -20,7 +22,8 @@
         position: relative;
         width: 90vw;
         max-width: 450px;
-        max-height: 85vh;
+        max-height: calc(100vh - 40px); // Đảm bảo có khoảng cách với mép màn hình
+        margin: 20px; // Thêm margin để không bị sát mép
         display: flex;
         flex-direction: column;
         box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
@@ -29,11 +32,13 @@
 
         &.is-error {
             background: #fdfdfe;
+            max-height: calc(100vh - 60px); // Giới hạn chiều cao khi lỗi
+            overflow-y: auto; // Cho phép scroll khi nội dung quá dài
         }
     }
 
     &-header {
-        padding: 12px 20px;
+        padding: 16px 20px; // Tăng padding để header không sát mép trên
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -63,12 +68,12 @@
     }
 
     &-error-view {
-        padding: 40px 25px; // Tăng padding để thoáng hơn
+        padding: 24px 20px 32px 20px; // Thêm padding-bottom để nút Thử lại không sát mép dưới
         display: flex;
         flex-direction: column;
         align-items: center;
         width: 100%;
-        height: 100%;
+        min-height: 300px;
         justify-content: center; // Căn giữa theo chiều dọc
 
         .error-icon-wrapper {

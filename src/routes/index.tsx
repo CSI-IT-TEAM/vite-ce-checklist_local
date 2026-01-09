@@ -1,14 +1,14 @@
 import { useEffect, lazy, Suspense } from "react";
 import { Route, Routes, Outlet } from "react-router-dom";
 import { useNavigate } from 'react-router-dom';
-import { isNullOrEmpty } from "../funtions/is-empty";
+import { isNullOrEmpty } from "../utils/is-empty";
 
-import LoginPage from "./login/LoginLocal";
-import HomeLayout from "./home/Home";
+import LoginPage from "../pages/login/Login";
+import HomeLayout from "../components/layout/HomeLayout";
 
-const Dashboard = lazy(() => import('./home/components/Checklist'));
-const History = lazy(() => import('./home/components/History'));
-const Temperature = lazy(() => import('./home/components/Temperature'));
+const Dashboard = lazy(() => import('../pages/checklist/Checklist'));
+const History = lazy(() => import('../pages/history/History'));
+const Temperature = lazy(() => import('../pages/temperature/Temperature'));
 
 const RequireLogin = () => {
     const navigate = useNavigate()

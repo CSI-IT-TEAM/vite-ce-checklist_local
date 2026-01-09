@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, Suspense } from 'react'
 import { useNavigate, useLocation, Outlet } from 'react-router-dom'
-import './Home.css'
+import './HomeLayout.css'
 import { useTranslation } from '../../contexts/LanguageContext'
 
 const Home = () => {

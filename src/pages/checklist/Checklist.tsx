@@ -1,8 +1,6 @@
 import './Checklist.css'
-
 import { useNavigate } from 'react-router-dom'
-import './Checklist.css'
-import { useTranslation } from '../../../contexts/LanguageContext'
+import { useTranslation } from '../../contexts/LanguageContext'
 
 const Checklist = () => {
     const navigate = useNavigate()
