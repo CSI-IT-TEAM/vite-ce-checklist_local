@@ -15,7 +15,16 @@ export default defineConfig({
         secure: false,
       }
     }
-  },
+  }
+  // ,
+  // optimizeDeps: {
+  //   include: ['@mui/material', '@mui/icons-material', '@mui/styled-engine'],
+  // },
+  // build: {
+  //   commonjsOptions: {
+  //     include: [/node_modules/],
+  //   },
+  // },
 })
 
 
