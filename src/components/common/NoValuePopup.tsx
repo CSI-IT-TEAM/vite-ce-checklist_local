@@ -1,6 +1,18 @@
 import { useState } from 'react'
-import './NoValuePopup.css'
 import { useTranslation } from '../../contexts/LanguageContext'
+import {
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    Button,
+    TextField,
+    IconButton,
+    Typography
+} from '@mui/material'
+import CloseIcon from '@mui/icons-material/Close'
+import SaveIcon from '@mui/icons-material/Save'
+import ThermostatIcon from '@mui/icons-material/Thermostat'
 
 interface NoValuePopupProps {
     isOpen: boolean
@@ -14,8 +26,6 @@ const NoValuePopup = ({ isOpen, onClose, onSave, initialTemperature = '', initia
     const { t } = useTranslation()
     const [temperature, setTemperature] = useState(initialTemperature)
     const [remark, setRemark] = useState(initialRemark)
-
-    if (!isOpen) return null
 
     const handleSave = () => {
         onSave(temperature, remark)
@@ -31,60 +41,110 @@ const NoValuePopup = ({ isOpen, onClose, onSave, initialTemperature = '', initia
 
     const handleTemperatureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value
-        // Only allow numbers and decimal point
         if (value === '' || /^\d*\.?\d*$/.test(value)) {
             setTemperature(value)
         }
     }
 
     return (
-        <div className="no-popup-overlay" onClick={handleClose}>
-            <div className="no-popup-content" onClick={(e) => e.stopPropagation()}>
-                <div className="no-popup-header">
-                    <h2>{t('popup.editTitle')}</h2>
-                    <button className="no-popup-close" onClick={handleClose}>×</button>
-                </div>
-
-                <p className="no-popup-subtitle">
+        <Dialog
+            open={isOpen}
+            onClose={handleClose}
+            maxWidth="sm"
+            fullWidth
+            PaperProps={{
+                sx: {
+                    borderRadius: 3,
+                    overflow: 'hidden'
+                }
+            }}
+        >
+            <DialogTitle
+                sx={{
+                    background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+                    color: 'white',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1
+                }}
+            >
+                <ThermostatIcon />
+                <Typography variant="h6" component="span" fontWeight="bold" sx={{ flexGrow: 1 }}>
+                    {t('popup.editTitle')}
+                </Typography>
+                <IconButton onClick={handleClose} sx={{ color: 'white' }}>
+                    <CloseIcon />
+                </IconButton>
+            </DialogTitle>
+            <DialogContent sx={{ pt: 3 }}>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
                     {t('popup.editSubtitle')}
-                </p>
+                </Typography>
 
-                <div className="no-popup-body">
-                    <div className="no-popup-form-group">
-                        <label>{t('popup.temperatureLabel')}</label>
-                        <input
-                            type="text"
-                            placeholder={t('popup.temperaturePlaceholder')}
-                            value={temperature}
-                            onChange={handleTemperatureChange}
-                            className="no-popup-input"
-                        />
-                    </div>
+                <TextField
+                    fullWidth
+                    label={t('popup.temperatureLabel')}
+                    placeholder={t('popup.temperaturePlaceholder')}
+                    value={temperature}
+                    onChange={handleTemperatureChange}
+                    sx={{
+                        mb: 2,
+                        '& .MuiOutlinedInput-root': {
+                            borderRadius: 2,
+                            '&:hover fieldset': { borderColor: '#f5576c' },
+                            '&.Mui-focused fieldset': { borderColor: '#f5576c' }
+                        }
+                    }}
+                />
 
-                    <div className="no-popup-form-group">
-                        <label>
-                            {t('popup.issueLabel')} <span className="required">(*)</span>
-                        </label>
-                        <textarea
-                            placeholder={t('popup.issuePlaceholder')}
-                            value={remark}
-                            onChange={(e) => setRemark(e.target.value)}
-                            className="no-popup-textarea"
-                            rows={4}
-                        />
-                    </div>
-                </div>
-
-                <div className="no-popup-footer">
-                    <button className="no-popup-btn no-popup-btn-save" onClick={handleSave}>
-                        {t('popup.save')}
-                    </button>
-                    <button className="no-popup-btn no-popup-btn-cancel" onClick={handleClose}>
-                        {t('popup.close')}
-                    </button>
-                </div>
-            </div>
-        </div>
+                <TextField
+                    fullWidth
+                    multiline
+                    rows={4}
+                    label={
+                        <>
+                            {t('popup.issueLabel')} <span style={{ color: 'red' }}>*</span>
+                        </>
+                    }
+                    placeholder={t('popup.issuePlaceholder')}
+                    value={remark}
+                    onChange={(e) => setRemark(e.target.value)}
+                    sx={{
+                        '& .MuiOutlinedInput-root': {
+                            borderRadius: 2,
+                            '&:hover fieldset': { borderColor: '#f5576c' },
+                            '&.Mui-focused fieldset': { borderColor: '#f5576c' }
+                        }
+                    }}
+                />
+            </DialogContent>
+            <DialogActions sx={{ p: 2, gap: 1 }}>
+                <Button
+                    variant="contained"
+                    startIcon={<SaveIcon />}
+                    onClick={handleSave}
+                    sx={{
+                        borderRadius: 2,
+                        background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+                        '&:hover': { background: 'linear-gradient(135deg, #e080e8 0%, #e04a5e 100%)' }
+                    }}
+                >
+                    {t('popup.save')}
+                </Button>
+                <Button
+                    variant="outlined"
+                    onClick={handleClose}
+                    sx={{
+                        borderRadius: 2,
+                        borderColor: '#f5576c',
+                        color: '#f5576c',
+                        '&:hover': { borderColor: '#e04a5e', bgcolor: 'rgba(245, 87, 108, 0.04)' }
+                    }}
+                >
+                    {t('popup.close')}
+                </Button>
+            </DialogActions>
+        </Dialog>
     )
 }
 

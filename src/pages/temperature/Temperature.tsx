@@ -1,12 +1,41 @@
 import React, { useState, useEffect } from 'react'
-import './Temperature.css'
-import { QrCode } from 'lucide-react'
 import { getComboData, saveChecklistData } from '../../api'
 import CameraScan from '../../components/camera/CameraScan'
 import RemarkPopup from '../../components/common/RemarkPopup'
 import { isNullOrEmpty } from '../../utils/is-empty'
 import { useTranslation } from '../../contexts/LanguageContext'
+import { useThemeMode } from '../../contexts/ThemeContext'
 import CustomDatePicker from '../../components/common/CustomDatePicker'
+import {
+    Box,
+    Typography,
+    Paper,
+    FormControl,
+    InputLabel,
+    Select,
+    MenuItem,
+    TextField,
+    Button,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Fab,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    IconButton
+} from '@mui/material'
+import type { SelectChangeEvent } from '@mui/material/Select'
+import QrCodeScannerIcon from '@mui/icons-material/QrCodeScanner'
+import SendIcon from '@mui/icons-material/Send'
+import RefreshIcon from '@mui/icons-material/Refresh'
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline'
+import CloseIcon from '@mui/icons-material/Close'
 
 interface CheckPosition {
     settingValue: string
@@ -36,34 +65,21 @@ interface TemperatureProps {
 }
 
 const Temperature = ({ userData: propUserData }: TemperatureProps) => {
-    // Auto-fill from userData
     const userData = propUserData || JSON.parse(localStorage.getItem('userData') || '{}')
-    // Support cả cấu trúc mới (LoginLocal) và cũ (Login)
     const userInfo = userData?.user?.[0] || userData
     const { t } = useTranslation()
+    const { isDark } = useThemeMode()
 
-    const [openCamera, setOpenCamera] = useState(false);
-    const [cameraKey, setCameraKey] = useState(0);
-    const [showRemarkPopup, setShowRemarkPopup] = useState(false);
-    const [currentEditItem, setCurrentEditItem] = useState<{ id: number; position: 'left' | 'right' } | null>(null);
-    const [tempRemarkValue, setTempRemarkValue] = useState('');
+    const [openCamera, setOpenCamera] = useState(false)
+    const [cameraKey, setCameraKey] = useState(0)
+    const [showRemarkPopup, setShowRemarkPopup] = useState(false)
+    const [currentEditItem, setCurrentEditItem] = useState<{ id: number; position: 'left' | 'right' } | null>(null)
+    const [tempRemarkValue, setTempRemarkValue] = useState('')
 
-    // const [factory, setFactory] = useState('Vĩnh Cửu')
-    // const [location, setLocation] = useState('')
-    // Đọc đúng key từ userData (LoginLocal format)
-    // Ưu tiên nameEng vì userName bị lỗi VNI encoding
     const department = userInfo?.deptName || userInfo?.DEPT_NM || ''
     const departmentId = userInfo?.dept || userInfo?.DEPT_CD || ''
     const cardNumber = userInfo?.userID || userInfo?.empid || userInfo?.EMP_ID || ''
     const inspectorName = userInfo?.nameEng || userInfo?.userName || userInfo?.EMP_NAME || ''
-
-
-    // const {
-    //     isScanning,
-    //     decodedText,
-    //     openCamera,
-    //     setDecodedText
-    // } = useQrScannerStore();
 
     const [area, setArea] = useState('')
     const [plant, setPlant] = useState('')
@@ -72,7 +88,6 @@ const Temperature = ({ userData: propUserData }: TemperatureProps) => {
     const [machine, setMachine] = useState('')
 
     const [inspectionDate, setInspectionDate] = useState<Date | null>(new Date())
-    // const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
 
     const [areaList, setAreaList] = useState<any[]>([])
     const [plantList, setPlantList] = useState<any[]>([])
@@ -80,44 +95,36 @@ const Temperature = ({ userData: propUserData }: TemperatureProps) => {
     const [processList, setProcessList] = useState<any[]>([])
     const [machineList, setMachineList] = useState<any[]>([])
 
-    // State cho hộp thoại thông báo (thay thế cho alert/toast mặc định)
     const [notificationDialog, setNotificationDialog] = useState<{
-        open: boolean;
-        type: 'success' | 'error';
-        title: string;
-        message: string;
-    }>({ open: false, type: 'success', title: '', message: '' });
-
-
+        open: boolean
+        type: 'success' | 'error'
+        title: string
+        message: string
+    }>({ open: false, type: 'success', title: '', message: '' })
 
     // Fetch Area on mount
     useEffect(() => {
         const fetchAreaList = async () => {
             try {
-                const result = await getComboData('CBO_FAC');
+                const result = await getComboData('CBO_FAC')
                 if (result?.success && result?.data?.OUT_CURSOR) {
-                    setAreaList(result.data.OUT_CURSOR.filter((item: any) => item.NAME !== 'All' && item.CODE !== 'ALL'));
+                    setAreaList(result.data.OUT_CURSOR.filter((item: any) => item.NAME !== 'All' && item.CODE !== 'ALL'))
                 }
             } catch (err) {
-                console.error("Error fetching area:", err);
+                console.error("Error fetching area:", err)
             }
-        };
-        fetchAreaList();
-        setOpenCamera(false);
+        }
+        fetchAreaList()
+        setOpenCamera(false)
     }, [])
 
-
-
-
-
-    const handleAreaChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const handleAreaChange = async (e: SelectChangeEvent<string>) => {
         const selectedArea = e.target.value
         setArea(selectedArea)
         setPlant('')
         setLine('')
         setProcess('')
         setMachine('')
-
         setPlantList([])
         setLineList([])
         setProcessList([])
@@ -125,17 +132,17 @@ const Temperature = ({ userData: propUserData }: TemperatureProps) => {
 
         if (selectedArea) {
             try {
-                const result = await getComboData('CBO_PLANT', { condition1: selectedArea });
+                const result = await getComboData('CBO_PLANT', { condition1: selectedArea })
                 if (result?.success && result?.data?.OUT_CURSOR) {
-                    setPlantList(result.data.OUT_CURSOR.filter((item: any) => item.NAME !== 'All' && item.CODE !== 'ALL'));
+                    setPlantList(result.data.OUT_CURSOR.filter((item: any) => item.NAME !== 'All' && item.CODE !== 'ALL'))
                 }
             } catch (err) {
-                console.error("Error fetching plant:", err);
+                console.error("Error fetching plant:", err)
             }
         }
     }
 
-    const handlePlantChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const handlePlantChange = async (e: SelectChangeEvent<string>) => {
         const selectedPlant = e.target.value
         setPlant(selectedPlant)
         setLine('')
@@ -150,17 +157,17 @@ const Temperature = ({ userData: propUserData }: TemperatureProps) => {
                 const result = await getComboData('CBO_LINE', {
                     condition1: area,
                     condition2: selectedPlant
-                });
+                })
                 if (result?.success && result?.data?.OUT_CURSOR) {
-                    setLineList(result.data.OUT_CURSOR.filter((item: any) => item.NAME !== 'All' && item.CODE !== 'ALL'));
+                    setLineList(result.data.OUT_CURSOR.filter((item: any) => item.NAME !== 'All' && item.CODE !== 'ALL'))
                 }
             } catch (err) {
-                console.error("Error fetching line:", err);
+                console.error("Error fetching line:", err)
             }
         }
     }
 
-    const handleLineChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const handleLineChange = async (e: SelectChangeEvent<string>) => {
         const selectedLine = e.target.value
         setLine(selectedLine)
         setProcess('')
@@ -174,17 +181,17 @@ const Temperature = ({ userData: propUserData }: TemperatureProps) => {
                     condition1: area,
                     condition2: plant,
                     condition3: selectedLine
-                });
+                })
                 if (result?.success && result?.data?.OUT_CURSOR) {
-                    setProcessList(result.data.OUT_CURSOR.filter((item: any) => item.NAME !== 'All' && item.CODE !== 'ALL'));
+                    setProcessList(result.data.OUT_CURSOR.filter((item: any) => item.NAME !== 'All' && item.CODE !== 'ALL'))
                 }
             } catch (err) {
-                console.error("Error fetching process:", err);
+                console.error("Error fetching process:", err)
             }
         }
     }
 
-    const handleProcessChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const handleProcessChange = async (e: SelectChangeEvent<string>) => {
         const selectedProcess = e.target.value
         setProcess(selectedProcess)
         setMachine('')
@@ -197,255 +204,169 @@ const Temperature = ({ userData: propUserData }: TemperatureProps) => {
                     condition2: plant,
                     condition3: line,
                     condition4: selectedProcess
-                });
+                })
                 if (result?.success && result?.data?.OUT_CURSOR) {
-                    setMachineList(result.data.OUT_CURSOR.filter((item: any) => item.NAME !== 'All' && item.CODE !== 'ALL'));
+                    setMachineList(result.data.OUT_CURSOR.filter((item: any) => item.NAME !== 'All' && item.CODE !== 'ALL'))
                 }
             } catch (err) {
-                console.error("Error fetching machine:", err);
+                console.error("Error fetching machine:", err)
             }
         }
     }
 
-    const handleMachineChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const handleMachineChange = (e: SelectChangeEvent<string>) => {
         const selectedMachine = e.target.value
         setMachine(selectedMachine)
 
-        // Find the selected machine in machineList to get setting values
         const machineData = machineList.find((item: any) =>
             (item.CODE || item.NAME) === selectedMachine
         )
 
         if (machineData) {
-            // Update checkItems with setting and display values from machine data
             setCheckItems(items => items.map(item => {
-                let leftSetting = '';
-                let rightSetting = '';
-                let leftDisplay = '';
-                let rightDisplay = '';
+                let leftSetting = ''
+                let rightSetting = ''
+                let leftDisplay = ''
+                let rightDisplay = ''
 
                 if (item.id === 1) {
-                    // Lower
-                    leftSetting = machineData.LOWER_SETTING_L != null ? String(machineData.LOWER_SETTING_L) : '';
-                    rightSetting = machineData.LOWER_SETTING_R != null ? String(machineData.LOWER_SETTING_R) : '';
-                    leftDisplay = machineData.LOWER_DISPLAY_L != null ? String(machineData.LOWER_DISPLAY_L) : '';
-                    rightDisplay = machineData.LOWER_DISPLAY_R != null ? String(machineData.LOWER_DISPLAY_R) : '';
+                    leftSetting = machineData.LOWER_SETTING_L != null ? String(machineData.LOWER_SETTING_L) : ''
+                    rightSetting = machineData.LOWER_SETTING_R != null ? String(machineData.LOWER_SETTING_R) : ''
+                    leftDisplay = machineData.LOWER_DISPLAY_L != null ? String(machineData.LOWER_DISPLAY_L) : ''
+                    rightDisplay = machineData.LOWER_DISPLAY_R != null ? String(machineData.LOWER_DISPLAY_R) : ''
                 } else if (item.id === 2) {
-                    // Middle
-                    leftSetting = machineData.MIDDLE_SETTING_L != null ? String(machineData.MIDDLE_SETTING_L) : '';
-                    rightSetting = machineData.MIDDLE_SETTING_R != null ? String(machineData.MIDDLE_SETTING_R) : '';
-                    leftDisplay = machineData.MIDDLE_DISPLAY_L != null ? String(machineData.MIDDLE_DISPLAY_L) : '';
-                    rightDisplay = machineData.MIDDLE_DISPLAY_R != null ? String(machineData.MIDDLE_DISPLAY_R) : '';
+                    leftSetting = machineData.MIDDLE_SETTING_L != null ? String(machineData.MIDDLE_SETTING_L) : ''
+                    rightSetting = machineData.MIDDLE_SETTING_R != null ? String(machineData.MIDDLE_SETTING_R) : ''
+                    leftDisplay = machineData.MIDDLE_DISPLAY_L != null ? String(machineData.MIDDLE_DISPLAY_L) : ''
+                    rightDisplay = machineData.MIDDLE_DISPLAY_R != null ? String(machineData.MIDDLE_DISPLAY_R) : ''
                 } else if (item.id === 3) {
-                    // Upper
-                    leftSetting = machineData.UPPER_SETTING_L != null ? String(machineData.UPPER_SETTING_L) : '';
-                    rightSetting = machineData.UPPER_SETTING_R != null ? String(machineData.UPPER_SETTING_R) : '';
-                    leftDisplay = machineData.UPPER_DISPLAY_L != null ? String(machineData.UPPER_DISPLAY_L) : '';
-                    rightDisplay = machineData.UPPER_DISPLAY_R != null ? String(machineData.UPPER_DISPLAY_R) : '';
+                    leftSetting = machineData.UPPER_SETTING_L != null ? String(machineData.UPPER_SETTING_L) : ''
+                    rightSetting = machineData.UPPER_SETTING_R != null ? String(machineData.UPPER_SETTING_R) : ''
+                    leftDisplay = machineData.UPPER_DISPLAY_L != null ? String(machineData.UPPER_DISPLAY_L) : ''
+                    rightDisplay = machineData.UPPER_DISPLAY_R != null ? String(machineData.UPPER_DISPLAY_R) : ''
                 }
 
                 return {
                     ...item,
-                    left: {
-                        ...item.left,
-                        settingValue: leftSetting,
-                        displayValue: leftDisplay
-                    },
-                    right: {
-                        ...item.right,
-                        settingValue: rightSetting,
-                        displayValue: rightDisplay
-                    }
-                };
-            }));
+                    left: { ...item.left, settingValue: leftSetting, displayValue: leftDisplay },
+                    right: { ...item.right, settingValue: rightSetting, displayValue: rightDisplay }
+                }
+            }))
         } else {
-            // Reset values if no machine selected
             setCheckItems(items => items.map(item => ({
                 ...item,
                 left: { ...item.left, settingValue: '', displayValue: '' },
                 right: { ...item.right, settingValue: '', displayValue: '' }
-            })));
+            })))
         }
     }
 
     const createInitialPosition = () => ({ settingValue: '', displayValue: '', value: '', remark: '' })
 
     const [checkItems, setCheckItems] = useState<CheckItem[]>([
-        {
-            id: 1,
-            name: 'temperature.item1',
-            standard: 'temperature.standard1',
-            left: createInitialPosition(),
-            right: createInitialPosition()
-        },
-        {
-            id: 2,
-            name: 'temperature.item2',
-            standard: 'temperature.standard2',
-            left: createInitialPosition(),
-            right: createInitialPosition()
-        },
-        {
-            id: 3,
-            name: 'temperature.item3',
-            standard: 'temperature.standard3',
-            left: createInitialPosition(),
-            right: createInitialPosition()
-        },
+        { id: 1, name: 'temperature.item1', standard: 'temperature.standard1', left: createInitialPosition(), right: createInitialPosition() },
+        { id: 2, name: 'temperature.item2', standard: 'temperature.standard2', left: createInitialPosition(), right: createInitialPosition() },
+        { id: 3, name: 'temperature.item3', standard: 'temperature.standard3', left: createInitialPosition(), right: createInitialPosition() },
     ])
 
     const handleSettingValueChange = (id: number, position: 'left' | 'right', value: string) => {
         if (value !== '' && !/^\d*\.?\d*$/.test(value)) return
-
         setCheckItems(items =>
             items.map(item => {
-                if (item.id !== id) return item;
-                return {
-                    ...item,
-                    [position]: {
-                        ...item[position],
-                        settingValue: value
-                    }
-                }
+                if (item.id !== id) return item
+                return { ...item, [position]: { ...item[position], settingValue: value } }
             })
         )
     }
 
     const handleDisplayValueChange = (id: number, position: 'left' | 'right', value: string) => {
         if (value !== '' && !/^\d*\.?\d*$/.test(value)) return
-
         setCheckItems(items =>
             items.map(item => {
-                if (item.id !== id) return item;
-                return {
-                    ...item,
-                    [position]: {
-                        ...item[position],
-                        displayValue: value
-                    }
-                }
+                if (item.id !== id) return item
+                return { ...item, [position]: { ...item[position], displayValue: value } }
             })
         )
     }
 
     const handleValueChange = (id: number, position: 'left' | 'right', value: string) => {
         if (value !== '' && !/^\d*\.?\d*$/.test(value)) return
-
         setCheckItems(items =>
             items.map(item => {
-                if (item.id !== id) return item;
-                return {
-                    ...item,
-                    [position]: {
-                        ...item[position],
-                        value: value
-                    }
-                }
+                if (item.id !== id) return item
+                return { ...item, [position]: { ...item[position], value: value } }
             })
         )
     }
 
-    // const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //     if (e.target.files) {
-    //         setUploadedFiles([...uploadedFiles, ...Array.from(e.target.files)])
-    //     }
-    // }
-
-    // Handle click on Remarks cell to open popup
     const handleRemarkClick = (id: number, position: 'left' | 'right') => {
-        const item = checkItems.find(item => item.id === id);
+        const item = checkItems.find(item => item.id === id)
         if (item) {
-            setCurrentEditItem({ id, position });
-            setTempRemarkValue(item[position].remark);
-            setShowRemarkPopup(true);
+            setCurrentEditItem({ id, position })
+            setTempRemarkValue(item[position].remark)
+            setShowRemarkPopup(true)
         }
-    };
+    }
 
     const handleSaveRemark = (remark: string) => {
         if (currentEditItem) {
             setCheckItems(items =>
                 items.map(item => {
-                    if (item.id !== currentEditItem.id) return item;
-                    return {
-                        ...item,
-                        [currentEditItem.position]: {
-                            ...item[currentEditItem.position],
-                            remark: remark
-                        }
-                    }
+                    if (item.id !== currentEditItem.id) return item
+                    return { ...item, [currentEditItem.position]: { ...item[currentEditItem.position], remark: remark } }
                 })
-            );
-            setShowRemarkPopup(false);
-            setCurrentEditItem(null);
-            setTempRemarkValue('');
+            )
+            setShowRemarkPopup(false)
+            setCurrentEditItem(null)
+            setTempRemarkValue('')
         }
-    };
+    }
 
     const handleCloseRemarkPopup = () => {
-        setShowRemarkPopup(false);
-        setCurrentEditItem(null);
-        setTempRemarkValue('');
-    };
+        setShowRemarkPopup(false)
+        setCurrentEditItem(null)
+        setTempRemarkValue('')
+    }
 
     const resetForm = () => {
-        // Reset tất cả combo boxes về trạng thái ban đầu
         setArea('')
         setPlant('')
         setLine('')
         setProcess('')
         setMachine('')
-
-        // Reset các danh sách combo (giữ lại areaList vì đã load từ đầu)
         setPlantList([])
         setLineList([])
         setProcessList([])
         setMachineList([])
-
-        // Reset các ô nhập liệu
         setCheckItems(items => items.map(item => ({
             ...item,
             left: createInitialPosition(),
             right: createInitialPosition()
-        })));
+        })))
     }
 
     const showNotification = (type: 'success' | 'error', title: string, message: string) => {
-        setNotificationDialog({ open: true, type, title, message });
-
-        // Auto-close success notifications after 2 seconds
+        setNotificationDialog({ open: true, type, title, message })
         if (type === 'success') {
             setTimeout(() => {
-                setNotificationDialog(prev => ({ ...prev, open: false }));
-            }, 2000);
+                setNotificationDialog(prev => ({ ...prev, open: false }))
+            }, 2000)
         }
-    };
+    }
 
     const handleSubmit = async () => {
-        if (!machine) {
+        if (isNullOrEmpty(machine)) {
             showNotification('error', t('notification.error'), t('notification.selectMachine'))
             return
         }
 
-        // Validate: All three (Setting, Display, Value) must either all have values or all be empty
-        // TEMPORARILY DISABLED - uncomment after testing
-        // const validationErrors: string[] = []
-        // checkItems.forEach(item => { ... })
-
-        // if (validationErrors.length > 0) {
-        //     console.log('Validation Errors:', validationErrors)
-        //     alert removed
-        //     showNotification('error', t('notification.error'), t('notification.enterTemperature'))
-        //     return
-        // }
-
         const promises: Promise<any>[] = []
 
-        checkItems.forEach(item => {
+        checkItems.forEach((item) => {
             const processPosition = (position: 'left' | 'right', posData: CheckPosition) => {
-                // Save only if all three (Setting, Display, Value) have values
-                const hasSetting = posData.settingValue.trim() !== ''
-                const hasDisplay = posData.displayValue.trim() !== ''
-                const hasValue = posData.value.trim() !== ''
+                const hasSetting = !isNullOrEmpty(posData.settingValue)
+                const hasDisplay = !isNullOrEmpty(posData.displayValue)
+                const hasValue = !isNullOrEmpty(posData.value)
 
                 if (hasSetting && hasDisplay && hasValue) {
                     promises.push(saveChecklistData({
@@ -477,7 +398,6 @@ const Temperature = ({ userData: propUserData }: TemperatureProps) => {
 
         try {
             const results = await Promise.all(promises)
-            // Check if all saves were successful
             const allSuccess = results.every(r => r.success)
             if (allSuccess) {
                 showNotification('success', t('notification.success'), t('notification.saveSuccess'))
@@ -493,416 +413,364 @@ const Temperature = ({ userData: propUserData }: TemperatureProps) => {
     }
 
     const handleCloseCamera = () => {
-        setOpenCamera(false);
-        // Increment key to ensure fresh instance on next open
-        setCameraKey(prev => prev + 1);
+        setOpenCamera(false)
+        setCameraKey(prev => prev + 1)
     }
 
     const handleScanSuccess = async (decodedText: any) => {
         if (!isNullOrEmpty(decodedText)) {
-            setOpenCamera(false);
+            setOpenCamera(false)
 
             try {
-                const qrResult = await getComboData('QR_INFOR', { condition1: decodedText });
+                const qrResult = await getComboData('QR_INFOR', { condition1: decodedText })
 
                 if (qrResult?.success && qrResult?.data?.OUT_CURSOR && qrResult.data.OUT_CURSOR.length > 0) {
-                    const info = qrResult.data.OUT_CURSOR[0];
-                    console.log('QR Data:', qrResult);
-                    // Set values
-                    setArea(info.FAC_CD);
-                    setPlant(info.PLANT_CD);
-                    setLine(info.LINE_CD);
-                    setProcess(info.LOC_CD);
-                    setMachine(info.MC_CODE);
+                    const info = qrResult.data.OUT_CURSOR[0]
+                    setArea(info.FAC_CD)
+                    setPlant(info.PLANT_CD)
+                    setLine(info.LINE_CD)
+                    setProcess(info.LOC_CD)
+                    setMachine(info.MC_CODE)
 
-                    // Set setting and display values from QR data
                     setCheckItems(items => items.map(item => {
-                        let leftSetting = '';
-                        let rightSetting = '';
-                        let leftDisplay = '';
-                        let rightDisplay = '';
+                        let leftSetting = '', rightSetting = '', leftDisplay = '', rightDisplay = ''
 
                         if (item.id === 1) {
-                            // Lower
-                            leftSetting = info.LOWER_SETTING_L != null ? String(info.LOWER_SETTING_L) : '';
-                            rightSetting = info.LOWER_SETTING_R != null ? String(info.LOWER_SETTING_R) : '';
-                            leftDisplay = info.LOWER_DISPLAY_L != null ? String(info.LOWER_DISPLAY_L) : '';
-                            rightDisplay = info.LOWER_DISPLAY_R != null ? String(info.LOWER_DISPLAY_R) : '';
+                            leftSetting = info.LOWER_SETTING_L != null ? String(info.LOWER_SETTING_L) : ''
+                            rightSetting = info.LOWER_SETTING_R != null ? String(info.LOWER_SETTING_R) : ''
+                            leftDisplay = info.LOWER_DISPLAY_L != null ? String(info.LOWER_DISPLAY_L) : ''
+                            rightDisplay = info.LOWER_DISPLAY_R != null ? String(info.LOWER_DISPLAY_R) : ''
                         } else if (item.id === 2) {
-                            // Middle
-                            leftSetting = info.MIDDLE_SETTING_L != null ? String(info.MIDDLE_SETTING_L) : '';
-                            rightSetting = info.MIDDLE_SETTING_R != null ? String(info.MIDDLE_SETTING_R) : '';
-                            leftDisplay = info.MIDDLE_DISPLAY_L != null ? String(info.MIDDLE_DISPLAY_L) : '';
-                            rightDisplay = info.MIDDLE_DISPLAY_R != null ? String(info.MIDDLE_DISPLAY_R) : '';
+                            leftSetting = info.MIDDLE_SETTING_L != null ? String(info.MIDDLE_SETTING_L) : ''
+                            rightSetting = info.MIDDLE_SETTING_R != null ? String(info.MIDDLE_SETTING_R) : ''
+                            leftDisplay = info.MIDDLE_DISPLAY_L != null ? String(info.MIDDLE_DISPLAY_L) : ''
+                            rightDisplay = info.MIDDLE_DISPLAY_R != null ? String(info.MIDDLE_DISPLAY_R) : ''
                         } else if (item.id === 3) {
-                            // Upper
-                            leftSetting = info.UPPER_SETTING_L != null ? String(info.UPPER_SETTING_L) : '';
-                            rightSetting = info.UPPER_SETTING_R != null ? String(info.UPPER_SETTING_R) : '';
-                            leftDisplay = info.UPPER_DISPLAY_L != null ? String(info.UPPER_DISPLAY_L) : '';
-                            rightDisplay = info.UPPER_DISPLAY_R != null ? String(info.UPPER_DISPLAY_R) : '';
+                            leftSetting = info.UPPER_SETTING_L != null ? String(info.UPPER_SETTING_L) : ''
+                            rightSetting = info.UPPER_SETTING_R != null ? String(info.UPPER_SETTING_R) : ''
+                            leftDisplay = info.UPPER_DISPLAY_L != null ? String(info.UPPER_DISPLAY_L) : ''
+                            rightDisplay = info.UPPER_DISPLAY_R != null ? String(info.UPPER_DISPLAY_R) : ''
                         }
 
                         return {
                             ...item,
-                            left: {
-                                ...item.left,
-                                settingValue: leftSetting,
-                                displayValue: leftDisplay
-                            },
-                            right: {
-                                ...item.right,
-                                settingValue: rightSetting,
-                                displayValue: rightDisplay
-                            }
-                        };
-                    }));
+                            left: { ...item.left, settingValue: leftSetting, displayValue: leftDisplay },
+                            right: { ...item.right, settingValue: rightSetting, displayValue: rightDisplay }
+                        }
+                    }))
 
-                    // Fetch full lists concurrently
                     try {
                         const [plantRes, lineRes, processRes, machineRes] = await Promise.all([
                             getComboData('CBO_PLANT', { condition1: info.FAC_CD }),
                             getComboData('CBO_LINE', { condition1: info.FAC_CD, condition2: info.PLANT_CD }),
                             getComboData('CBO_PROCESS', { condition1: info.FAC_CD, condition2: info.PLANT_CD, condition3: info.LINE_CD }),
                             getComboData('CBO_MACHINE', { condition1: info.FAC_CD, condition2: info.PLANT_CD, condition3: info.LINE_CD, condition4: info.LOC_CD })
-                        ]);
+                        ])
 
                         if (plantRes?.success && plantRes?.data?.OUT_CURSOR) {
-                            setPlantList(plantRes.data.OUT_CURSOR.filter((item: any) => item.NAME !== 'All' && item.CODE !== 'All'));
+                            setPlantList(plantRes.data.OUT_CURSOR.filter((item: any) => item.NAME !== 'All' && item.CODE !== 'All'))
                         }
                         if (lineRes?.success && lineRes?.data?.OUT_CURSOR) {
-                            setLineList(lineRes.data.OUT_CURSOR.filter((item: any) => item.NAME !== 'All' && item.CODE !== 'All'));
+                            setLineList(lineRes.data.OUT_CURSOR.filter((item: any) => item.NAME !== 'All' && item.CODE !== 'All'))
                         }
                         if (processRes?.success && processRes?.data?.OUT_CURSOR) {
-                            setProcessList(processRes.data.OUT_CURSOR.filter((item: any) => item.NAME !== 'All' && item.CODE !== 'All'));
+                            setProcessList(processRes.data.OUT_CURSOR.filter((item: any) => item.NAME !== 'All' && item.CODE !== 'All'))
                         }
                         if (machineRes?.success && machineRes?.data?.OUT_CURSOR) {
-                            setMachineList(machineRes.data.OUT_CURSOR.filter((item: any) => item.NAME !== 'All' && item.CODE !== 'All'));
+                            setMachineList(machineRes.data.OUT_CURSOR.filter((item: any) => item.NAME !== 'All' && item.CODE !== 'All'))
                         }
-
                     } catch (err) {
-                        console.error("Error fetching combo lists:", err);
+                        console.error("Error fetching combo lists:", err)
                     }
-
                 } else {
-                    showNotification('error', t('notification.error'), t('notification.deviceNotFound'));
+                    showNotification('error', t('notification.error'), t('notification.deviceNotFound'))
                 }
             } catch (err) {
-                console.error("Error fetching QR info:", err);
-                showNotification('error', t('notification.error'), t('notification.deviceError'));
+                console.error("Error fetching QR info:", err)
+                showNotification('error', t('notification.error'), t('notification.deviceError'))
             }
         }
     }
 
+    const isFGA = process?.toUpperCase()?.startsWith('FGA')
+
     return (
-        <div className="temperature-container">
-            <div className="temperature-header">
-                <h1>{t('temperature.title')}</h1>
-                <p>{t('temperature.subtitle')}</p>
-            </div>
+        <Box sx={{ pb: 4 }}>
+            {/* Header - Left Aligned */}
+            <Box sx={{ textAlign: 'left', mb: { xs: 3, md: 5 } }}>
+                <Typography
+                    variant="h5"
+                    fontWeight="bold"
+                    sx={{ color: 'primary.main', mb: 0.5, fontSize: { xs: '1.3rem', md: '1.8rem' } }}
+                >
+                    {t('temperature.title')}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.85rem', md: '1rem' } }}>
+                    {t('temperature.subtitle')}
+                </Typography>
+            </Box>
 
-            <div className="temperature-content">
-                {/* Left Column - Personal Info */}
-                {/* <div className="info-section">
-                    <h3>{t('temperature.personalInfo')}</h3>
-                    <div className="form-group">
-                        <label>{t('temperature.department')}</label>
-                        <input
-                            type="text"
-                            value={department}
-                            disabled
-                            className="bg-gray-100 cursor-not-allowed"
-                        />
-                    </div>
+            {/* Form Section */}
+            <Paper elevation={1} sx={{ p: { xs: 2, md: 3 }, borderRadius: 2, mb: 2 }}>
+                <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2, color: 'primary.main', fontSize: { xs: '0.9rem', md: '1.2rem' } }}>
+                    {t('temperature.inspectionInfo')}
+                </Typography>
 
-                    <div className="form-group">
-                        <label>{t('temperature.idCard')}</label>
-                        <input
-                            type="text"
-                            value={cardNumber}
-                            disabled
-                            className="bg-gray-100 cursor-not-allowed"
-                        />
-                    </div>
+                <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: '1fr 1fr 1fr' }, gap: 2 }}>
+                    <FormControl fullWidth size="small" disabled>
+                        <InputLabel>{t('temperature.area')}</InputLabel>
+                        <Select value={area} onChange={handleAreaChange} label={t('temperature.area')}>
+                            {areaList.map((item, index) => (
+                                <MenuItem key={index} value={item.CODE || item.NAME}>{item.NAME || item.CODE}</MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
 
-                    <div className="form-group">
-                        <label>{t('temperature.fullName')}</label>
-                        <input
-                            type="text"
-                            value={inspectorName}
-                            disabled
-                            className="bg-gray-100 cursor-not-allowed"
-                        />
-                    </div>
-                </div> */}
+                    <FormControl fullWidth size="small" disabled>
+                        <InputLabel>{t('temperature.plant')}</InputLabel>
+                        <Select value={plant} onChange={handlePlantChange} label={t('temperature.plant')}>
+                            {plantList.map((item, index) => (
+                                <MenuItem key={index} value={item.CODE || item.NAME}>{item.NAME || item.CODE}</MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
 
-                {/* Middle Column - Inspection Info */}
-                <div className="inspection-section">
-                    <h3>{t('temperature.inspectionInfo')}</h3>
+                    <FormControl fullWidth size="small" disabled>
+                        <InputLabel>{t('temperature.line')}</InputLabel>
+                        <Select value={line} onChange={handleLineChange} label={t('temperature.line')}>
+                            {lineList.map((item, index) => (
+                                <MenuItem key={index} value={item.CODE || item.NAME}>{item.NAME || item.CODE}</MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
 
-                    <div className="form-group">
-                        <label>{t('temperature.area')} <span className="required"></span></label>
-                        <select value={area} onChange={handleAreaChange} disabled>
-                            <option value="" hidden>{t('common.select')}</option>
-                            {areaList.length === 0 ? (
-                                <option value="" disabled>No options</option>
-                            ) : (
-                                areaList.map((item, index) => (
-                                    <option key={index} value={item.CODE || item.NAME}>{item.NAME || item.CODE}</option>
-                                ))
-                            )}
-                        </select>
-                    </div>
+                    <FormControl fullWidth size="small" disabled>
+                        <InputLabel>{t('temperature.process')}</InputLabel>
+                        <Select value={process} onChange={handleProcessChange} label={t('temperature.process')}>
+                            {processList.map((item, index) => (
+                                <MenuItem key={index} value={item.CODE || item.NAME}>{item.NAME || item.CODE}</MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
 
-                    <div className="form-group">
-                        <label>{t('temperature.plant')} <span className="required"></span></label>
-                        <select value={plant} onChange={handlePlantChange} disabled>
-                            <option value="" hidden>{t('common.select')}</option>
-                            {plantList.length === 0 ? (
-                                <option value="" disabled>No options</option>
-                            ) : (
-                                plantList.map((item, index) => (
-                                    <option key={index} value={item.CODE || item.NAME}>{item.NAME || item.CODE}</option>
-                                ))
-                            )}
-                        </select>
-                    </div>
+                    <FormControl fullWidth size="small" disabled>
+                        <InputLabel>{t('temperature.machine')}</InputLabel>
+                        <Select value={machine} onChange={handleMachineChange} label={t('temperature.machine')}>
+                            {machineList.map((item, index) => (
+                                <MenuItem key={index} value={item.CODE || item.NAME}>{item.NAME || item.CODE}</MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
 
-                    <div className="form-group">
-                        <label>{t('temperature.line')} <span className="required"></span></label>
-                        <select value={line} onChange={handleLineChange} disabled>
-                            <option value="" hidden>{t('common.select')}</option>
-                            {lineList.length === 0 ? (
-                                <option value="" disabled>No options</option>
-                            ) : (
-                                lineList.map((item, index) => (
-                                    <option key={index} value={item.CODE || item.NAME}>{item.NAME || item.CODE}</option>
-                                ))
-                            )}
-                        </select>
-                    </div>
+                    <CustomDatePicker
+                        selected={inspectionDate}
+                        onChange={(date) => setInspectionDate(date)}
+                        label={t('temperature.checkDate')}
+                        disabled
+                    />
+                </Box>
+            </Paper>
 
-                    <div className="form-group">
-                        <label>{t('temperature.process')} <span className="required"></span></label>
-                        <select value={process} onChange={handleProcessChange} disabled>
-                            <option value="" hidden>{t('common.select')}</option>
-                            {processList.length === 0 ? (
-                                <option value="" disabled>No options</option>
-                            ) : (
-                                processList.map((item, index) => (
-                                    <option key={index} value={item.CODE || item.NAME}>{item.NAME || item.CODE}</option>
-                                ))
-                            )}
-                        </select>
-                    </div>
+            {/* Checklist Table */}
+            {/* Checklist Table */}
+            <Paper elevation={1} sx={{ borderRadius: 2, overflow: 'hidden' }}>
+                <TableContainer>
+                    <Table size="small" sx={{ tableLayout: 'fixed' }}>
+                        <TableHead>
+                            <TableRow sx={{ bgcolor: isDark ? '#1e3a5f' : '#1565c0' }}>
+                                <TableCell sx={{ color: 'white', fontWeight: 'bold', width: '16%', py: { xs: 1, md: 2 }, px: 0.5, fontSize: { xs: '0.65rem', md: '0.9rem' }, textAlign: 'center', borderRight: '1px solid rgba(255,255,255,0.2)' }}>{t('temperature.category')}</TableCell>
+                                <TableCell sx={{ color: 'white', fontWeight: 'bold', width: '13%', py: { xs: 1, md: 2 }, px: 0.5, fontSize: { xs: '0.65rem', md: '0.9rem' }, textAlign: 'center', borderRight: '1px solid rgba(255,255,255,0.2)' }}>{t('temperature.position')}</TableCell>
+                                <TableCell sx={{ color: 'white', fontWeight: 'bold', textAlign: 'center', width: '17%', py: { xs: 1, md: 2 }, px: 0.5, fontSize: { xs: '0.65rem', md: '0.9rem' }, borderRight: '1px solid rgba(255,255,255,0.2)' }}>{t('common.setting')}</TableCell>
+                                <TableCell sx={{ color: 'white', fontWeight: 'bold', textAlign: 'center', width: '17%', py: { xs: 1, md: 2 }, px: 0.5, fontSize: { xs: '0.65rem', md: '0.9rem' }, borderRight: '1px solid rgba(255,255,255,0.2)' }}>{t('common.display')}</TableCell>
+                                <TableCell sx={{ color: 'white', fontWeight: 'bold', textAlign: 'center', width: '17%', py: { xs: 1, md: 2 }, px: 0.5, fontSize: { xs: '0.65rem', md: '0.9rem' }, borderRight: '1px solid rgba(255,255,255,0.2)' }}>{t('common.value')}</TableCell>
+                                <TableCell sx={{ color: 'white', fontWeight: 'bold', width: '20%', py: { xs: 1, md: 2 }, px: 0.5, fontSize: { xs: '0.65rem', md: '0.9rem' }, textAlign: 'center' }}>{t('common.remarks')}</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {checkItems
+                                .filter(item => !(isFGA && item.id === 2))
+                                .map((item) => {
+                                    const getItemSuffix = () => {
+                                        if (!isFGA) return ''
+                                        if (item.id === 1) return ' (Upper)'
+                                        if (item.id === 3) return ' (F/S)'
+                                        return ''
+                                    }
 
-                    <div className="form-group">
-                        <label>{t('temperature.machine')} <span className="required"></span></label>
-                        <select value={machine} onChange={handleMachineChange} disabled>
-                            <option value="" hidden>{t('common.select')}</option>
-                            {machineList.length === 0 ? (
-                                <option value="" disabled>No options</option>
-                            ) : (
-                                machineList.map((item, index) => (
-                                    <option key={index} value={item.CODE || item.NAME}>{item.NAME || item.CODE}</option>
-                                ))
-                            )}
-                        </select>
-                    </div>
+                                    return (
+                                        <React.Fragment key={item.id}>
+                                            <TableRow sx={{ '&:hover': { bgcolor: isDark ? 'rgba(100, 181, 246, 0.08)' : 'rgba(21, 101, 192, 0.04)' } }}>
+                                                <TableCell rowSpan={2} sx={{ fontWeight: 'bold', borderRight: 1, borderRightColor: 'divider', fontSize: { xs: '0.65rem', md: '0.95rem' }, p: { xs: 0.5, md: 1.5 }, textAlign: 'center' }}>
+                                                    <Box>
+                                                        {t(item.name)}
+                                                        {getItemSuffix() && (
+                                                            <Typography variant="caption" sx={{ display: 'block', fontSize: { xs: '0.55rem', md: '0.75rem' }, color: 'text.secondary', mt: 0.25 }}>
+                                                                {getItemSuffix()}
+                                                            </Typography>
+                                                        )}
+                                                    </Box>
+                                                </TableCell>
+                                                <TableCell sx={{ fontSize: { xs: '0.65rem', md: '0.9rem' }, p: { xs: 0.5, md: 1.5 }, textAlign: 'center', borderRight: 1, borderRightColor: 'divider' }}>{t('temperature.left')}</TableCell>
+                                                <TableCell sx={{ p: { xs: 0.5, md: 1 }, borderRight: 1, borderRightColor: 'divider' }}>
+                                                    <TextField
+                                                        size="small"
+                                                        type="number"
+                                                        value={item.left.settingValue}
+                                                        onChange={(e) => handleSettingValueChange(item.id, 'left', e.target.value)}
+                                                        sx={{ '& input': { textAlign: 'center', p: { xs: '4px', md: '8px' }, fontSize: { xs: '0.75rem', md: '1rem' } }, '& .MuiOutlinedInput-root': { borderRadius: 1 } }}
+                                                    />
+                                                </TableCell>
+                                                <TableCell sx={{ p: { xs: 0.5, md: 1 }, borderRight: 1, borderRightColor: 'divider' }}>
+                                                    <TextField
+                                                        size="small"
+                                                        type="number"
+                                                        value={item.left.displayValue}
+                                                        onChange={(e) => handleDisplayValueChange(item.id, 'left', e.target.value)}
+                                                        sx={{ '& input': { textAlign: 'center', p: { xs: '4px', md: '8px' }, fontSize: { xs: '0.75rem', md: '1rem' } }, '& .MuiOutlinedInput-root': { borderRadius: 1 } }}
+                                                    />
+                                                </TableCell>
+                                                <TableCell sx={{ p: { xs: 0.5, md: 1 }, borderRight: 1, borderRightColor: 'divider' }}>
+                                                    <TextField
+                                                        size="small"
+                                                        type="number"
+                                                        value={item.left.value}
+                                                        onChange={(e) => handleValueChange(item.id, 'left', e.target.value)}
+                                                        sx={{ '& input': { textAlign: 'center', p: { xs: '4px', md: '8px' }, fontSize: { xs: '0.75rem', md: '1rem' } }, '& .MuiOutlinedInput-root': { borderRadius: 1 } }}
+                                                    />
+                                                </TableCell>
+                                                <TableCell
+                                                    sx={{ cursor: 'pointer', p: { xs: 0.5, md: 1.5 }, fontSize: { xs: '0.65rem', md: '0.85rem' }, textAlign: 'center', '&:hover': { bgcolor: isDark ? 'rgba(100, 181, 246, 0.12)' : 'rgba(21, 101, 192, 0.08)' } }}
+                                                    onClick={() => handleRemarkClick(item.id, 'left')}
+                                                >
+                                                    <Typography variant="caption" color={item.left.remark ? 'text.primary' : 'text.secondary'} sx={{ fontSize: { xs: '0.6rem', md: '0.8rem' }, display: 'block', lineHeight: 1.1 }}>
+                                                        {item.left.remark || 'Click to add'}
+                                                    </Typography>
+                                                </TableCell>
+                                            </TableRow>
+                                            <TableRow sx={{ '&:hover': { bgcolor: isDark ? 'rgba(100, 181, 246, 0.08)' : 'rgba(21, 101, 192, 0.04)' } }}>
+                                                <TableCell sx={{ fontSize: { xs: '0.65rem', md: '0.9rem' }, p: { xs: 0.5, md: 1.5 }, textAlign: 'center', borderRight: 1, borderRightColor: 'divider' }}>{t('temperature.right')}</TableCell>
+                                                <TableCell sx={{ p: { xs: 0.5, md: 1 }, borderRight: 1, borderRightColor: 'divider' }}>
+                                                    <TextField
+                                                        size="small"
+                                                        type="number"
+                                                        value={item.right.settingValue}
+                                                        onChange={(e) => handleSettingValueChange(item.id, 'right', e.target.value)}
+                                                        sx={{ '& input': { textAlign: 'center', p: { xs: '4px', md: '8px' }, fontSize: { xs: '0.75rem', md: '1rem' } }, '& .MuiOutlinedInput-root': { borderRadius: 1 } }}
+                                                    />
+                                                </TableCell>
+                                                <TableCell sx={{ p: { xs: 0.5, md: 1 }, borderRight: 1, borderRightColor: 'divider' }}>
+                                                    <TextField
+                                                        size="small"
+                                                        type="number"
+                                                        value={item.right.displayValue}
+                                                        onChange={(e) => handleDisplayValueChange(item.id, 'right', e.target.value)}
+                                                        sx={{ '& input': { textAlign: 'center', p: { xs: '4px', md: '8px' }, fontSize: { xs: '0.75rem', md: '1rem' } }, '& .MuiOutlinedInput-root': { borderRadius: 1 } }}
+                                                    />
+                                                </TableCell>
+                                                <TableCell sx={{ p: { xs: 0.5, md: 1 }, borderRight: 1, borderRightColor: 'divider' }}>
+                                                    <TextField
+                                                        size="small"
+                                                        type="number"
+                                                        value={item.right.value}
+                                                        onChange={(e) => handleValueChange(item.id, 'right', e.target.value)}
+                                                        sx={{ '& input': { textAlign: 'center', p: { xs: '4px', md: '8px' }, fontSize: { xs: '0.75rem', md: '1rem' } }, '& .MuiOutlinedInput-root': { borderRadius: 1 } }}
+                                                    />
+                                                </TableCell>
+                                                <TableCell
+                                                    sx={{ cursor: 'pointer', p: { xs: 0.5, md: 1.5 }, fontSize: { xs: '0.65rem', md: '0.85rem' }, textAlign: 'center', '&:hover': { bgcolor: isDark ? 'rgba(100, 181, 246, 0.12)' : 'rgba(21, 101, 192, 0.08)' } }}
+                                                    onClick={() => handleRemarkClick(item.id, 'right')}
+                                                >
+                                                    <Typography variant="caption" color={item.right.remark ? 'text.primary' : 'text.secondary'} sx={{ fontSize: { xs: '0.6rem', md: '0.8rem' }, display: 'block', lineHeight: 1.1 }}>
+                                                        {item.right.remark || 'Click to add'}
+                                                    </Typography>
+                                                </TableCell>
+                                            </TableRow>
+                                        </React.Fragment>
+                                    )
+                                })}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </Paper>
 
-                    <div className="form-group">
-                        <label>{t('temperature.checkDate')} <span className="required"></span></label>
-                        <CustomDatePicker
-                            selected={inspectionDate}
-                            onChange={(date) => setInspectionDate(date)}
-                            placeholder={t('common.select')}
-                            disabled
-                        />
-                    </div>
-
-                    {/* <div className="form-group">
-                        <label>Giờ Bắt Đầu <span className="required">(*)</span></label>
-                        <input
-                            type="time"
-                            value={startTime}
-                            onChange={(e) => setStartTime(e.target.value)}
-                            placeholder="09:50 AM"
-                        />
-                    </div>
-
-                    <div className="form-group">
-                        <label>Giờ Kết Thúc <span className="required">(*)</span></label>
-                        <input
-                            type="time"
-                            value={endTime}
-                            onChange={(e) => setEndTime(e.target.value)}
-                            placeholder="09:50 AM"
-                        />
-                    </div> */}
-
-                    {/* <div className="upload-section">
-                        <div className="upload-notice">
-                            <span>ℹ️</span> Vui lòng chọn các tập có định dạng được tải lên: jpeg, png
-                        </div>
-                        <div className="upload-zone">
-                            <input
-                                type="file"
-                                multiple
-                                accept="image/jpeg,image/png"
-                                onChange={handleFileUpload}
-                                id="file-upload"
-                                style={{ display: 'none' }}
-                            />
-                            <label htmlFor="file-upload" className="upload-label">
-                                <div className="upload-icon">☁️</div>
-                                <div>Click here to upload files</div>
-                            </label>
-                        </div>
-                    </div> */}
-                </div>
-
-                {/* Right Column - Checklist */}
-                <div className="checklist-section">
-
-                    <div className="checklist-table-wrapper">
-                        <table className="checklist-table">
-                            <thead>
-                                <tr>
-                                    <th className="col-category">{t('temperature.category')}</th>
-                                    <th className="col-position">{t('temperature.position')}</th>
-                                    <th className="col-value">{t('common.setting') || 'Setting'}</th>
-                                    <th className="col-value">{t('common.display') || 'Display'}</th>
-                                    <th className="col-value">{t('common.value')}</th>
-                                    <th className="col-remarks">{t('common.remarks') || 'Remarks'}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {checkItems
-                                    .filter(item => {
-                                        // Kiểm tra process có phải FGA không (case-insensitive, startsWith)
-                                        const isFGA = process?.toUpperCase()?.startsWith('FGA');
-                                        return !(isFGA && item.id === 2); // Ẩn Giữa khi process là FGA
-                                    })
-                                    .map((item) => {
-                                        // Kiểm tra process có phải FGA không
-                                        const isFGA = process?.toUpperCase()?.startsWith('FGA');
-
-                                        // Tính suffix cho tên item dựa vào process
-                                        const getItemSuffix = () => {
-                                            if (!isFGA) return ''; // Không hiển thị suffix khi process khác FGA
-                                            if (item.id === 1) return ' (Upper)';
-                                            if (item.id === 3) return ' (F/S)';
-                                            return '';
-                                        };
-
-                                        return (
-                                            <React.Fragment key={item.id}>
-                                                {/* Row 1: Left */}
-                                                <tr key={`${item.id}-left`}>
-                                                    <td rowSpan={2} className="item-content">
-                                                        <div className="item-name">{t(item.name)}{getItemSuffix()}</div>
-                                                        {/* {item.standard && (
-                                                    <div className="item-standard">{t(item.standard)}</div>
-                                                )} */}
-                                                    </td>
-                                                    <td className="position-cell">{t('temperature.left')}</td>
-                                                    <td className="value-cell">
-                                                        <input
-                                                            type="number"
-                                                            className="value-input"
-                                                            value={item.left.settingValue}
-                                                            onChange={(e) => handleSettingValueChange(item.id, 'left', e.target.value)}
-                                                            placeholder=""
-                                                        />
-                                                    </td>
-                                                    <td className="value-cell">
-                                                        <input
-                                                            type="number"
-                                                            className="value-input"
-                                                            value={item.left.displayValue}
-                                                            onChange={(e) => handleDisplayValueChange(item.id, 'left', e.target.value)}
-                                                            placeholder=""
-                                                        />
-                                                    </td>
-                                                    <td className="value-cell">
-                                                        <input
-                                                            type="number"
-                                                            className="value-input"
-                                                            value={item.left.value}
-                                                            onChange={(e) => handleValueChange(item.id, 'left', e.target.value)}
-                                                        />
-                                                    </td>
-                                                    <td className="remarks-cell" onClick={() => handleRemarkClick(item.id, 'left')}>
-                                                        <div className="remarks-content">
-                                                            {item.left.remark || <span className="remarks-placeholder">Click to add</span>}
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                {/* Row 2: Right */}
-                                                <tr key={`${item.id}-right`}>
-                                                    <td className="position-cell">{t('temperature.right')}</td>
-                                                    <td className="value-cell">
-                                                        <input
-                                                            type="number"
-                                                            className="value-input"
-                                                            value={item.right.settingValue}
-                                                            onChange={(e) => handleSettingValueChange(item.id, 'right', e.target.value)}
-                                                            placeholder=""
-                                                        />
-                                                    </td>
-                                                    <td className="value-cell">
-                                                        <input
-                                                            type="number"
-                                                            className="value-input"
-                                                            value={item.right.displayValue}
-                                                            onChange={(e) => handleDisplayValueChange(item.id, 'right', e.target.value)}
-                                                            placeholder=""
-                                                        />
-                                                    </td>
-                                                    <td className="value-cell">
-                                                        <input
-                                                            type="number"
-                                                            className="value-input"
-                                                            value={item.right.value}
-                                                            onChange={(e) => handleValueChange(item.id, 'right', e.target.value)}
-                                                        />
-                                                    </td>
-                                                    <td className="remarks-cell" onClick={() => handleRemarkClick(item.id, 'right')}>
-                                                        <div className="remarks-content">
-                                                            {item.right.remark || <span className="remarks-placeholder">Click to add</span>}
-                                                        </div>
-                                                    </td>
-                                                </tr>
-
-                                            </React.Fragment>
-                                        );
-                                    })}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <div className="temperature-actions">
-                <button className="btn-cancel" onClick={resetForm}>{t('common.cancel')}</button>
-                <button className="btn-submit" onClick={handleSubmit}>{t('common.submit')}</button>
-            </div>
+            {/* Action Buttons */}
+            <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 3 }}>
+                <Button
+                    variant="outlined"
+                    size="large"
+                    startIcon={<RefreshIcon />}
+                    onClick={resetForm}
+                    sx={{
+                        borderRadius: 3,
+                        px: { xs: 2, md: 5 },
+                        py: { xs: 1, md: 1.5 },
+                        borderColor: 'primary.main',
+                        color: 'primary.main',
+                        textTransform: 'none',
+                        fontWeight: 'bold',
+                        fontSize: { xs: '0.9rem', md: '1.1rem' },
+                        '&:hover': {
+                            borderColor: 'primary.dark',
+                            bgcolor: isDark ? 'rgba(100, 181, 246, 0.08)' : 'rgba(21, 101, 192, 0.04)'
+                        }
+                    }}
+                >
+                    {t('common.cancel')}
+                </Button>
+                <Button
+                    variant="contained"
+                    size="large"
+                    endIcon={<SendIcon />}
+                    onClick={handleSubmit}
+                    sx={{
+                        borderRadius: 3,
+                        px: { xs: 4, md: 7 },
+                        py: { xs: 1, md: 1.5 },
+                        background: isDark
+                            ? 'linear-gradient(135deg, #42a5f5 0%, #1976d2 100%)'
+                            : 'linear-gradient(135deg, #1e88e5 0%, #1565c0 100%)',
+                        boxShadow: isDark
+                            ? '0 4px 20px rgba(66, 165, 245, 0.4)'
+                            : '0 4px 12px rgba(21, 101, 192, 0.3)',
+                        textTransform: 'none',
+                        fontWeight: 'bold',
+                        fontSize: { xs: '0.9rem', md: '1.1rem' },
+                        '&:hover': {
+                            background: isDark
+                                ? 'linear-gradient(135deg, #64b5f6 0%, #1e88e5 100%)'
+                                : 'linear-gradient(135deg, #1565c0 0%, #0d47a1 100%)',
+                            boxShadow: isDark
+                                ? '0 6px 25px rgba(66, 165, 245, 0.5)'
+                                : '0 6px 16px rgba(21, 101, 192, 0.4)'
+                        }
+                    }}
+                >
+                    {t('common.submit')}
+                </Button>
+            </Box>
 
             {/* Floating QR Button */}
-            <button
-                className="floating-qr-button"
-                onClick={() => {
-                    setCameraKey(prev => prev + 1);
-                    setOpenCamera(true);
+            <Fab
+                color="primary"
+                sx={{
+                    position: 'fixed',
+                    bottom: { xs: 90, sm: 30 },
+                    right: 20,
+                    background: 'linear-gradient(135deg, #6a11cb 0%, #2575fc 100%)',
+                    '&:hover': { background: 'linear-gradient(135deg, #5a0db3 0%, #1e65e0 100%)' }
                 }}
-                title={t('temperature.scanQR') || 'Scan QR'}
+                onClick={() => {
+                    setCameraKey(prev => prev + 1)
+                    setOpenCamera(true)
+                }}
             >
-                <QrCode size={28} />
-            </button>
+                <QrCodeScannerIcon />
+            </Fab>
 
             {/* QR Scanner Dialog */}
-            {openCamera &&
+            {openCamera && (
                 <CameraScan key={cameraKey} open={openCamera} handleSuccess={handleScanSuccess} handleClose={handleCloseCamera} />
-            }
+            )}
 
             {/* Remark Popup */}
             <RemarkPopup
@@ -913,29 +781,45 @@ const Temperature = ({ userData: propUserData }: TemperatureProps) => {
             />
 
             {/* Notification Dialog */}
-            {notificationDialog.open && (
-                <div className="notification-overlay" onClick={() => setNotificationDialog({ ...notificationDialog, open: false })}>
-                    <div className={`notification-dialog notification-${notificationDialog.type}`} onClick={(e) => e.stopPropagation()}>
-                        <div className="notification-header">
-                            <h3>{notificationDialog.title}</h3>
-                            <button className="notification-close" onClick={() => setNotificationDialog({ ...notificationDialog, open: false })}>×</button>
-                        </div>
-                        <div className="notification-body">
-                            <p>{notificationDialog.message}</p>
-                        </div>
-                        <div className="notification-footer">
-                            <button
-                                className={`notification-btn notification-btn-${notificationDialog.type}`}
-                                onClick={() => setNotificationDialog({ ...notificationDialog, open: false })}
-                            >
-                                {t('common.ok')}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
-        </div>
-
+            <Dialog
+                open={notificationDialog.open}
+                onClose={() => setNotificationDialog({ ...notificationDialog, open: false })}
+                maxWidth="xs"
+                fullWidth
+                PaperProps={{ sx: { borderRadius: 3 } }}
+            >
+                <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    {notificationDialog.type === 'success' ? (
+                        <CheckCircleOutlineIcon color="success" />
+                    ) : (
+                        <ErrorOutlineIcon color="error" />
+                    )}
+                    {notificationDialog.title}
+                    <IconButton
+                        sx={{ ml: 'auto' }}
+                        onClick={() => setNotificationDialog({ ...notificationDialog, open: false })}
+                    >
+                        <CloseIcon />
+                    </IconButton>
+                </DialogTitle>
+                <DialogContent>
+                    <Typography>{notificationDialog.message}</Typography>
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        variant="contained"
+                        onClick={() => setNotificationDialog({ ...notificationDialog, open: false })}
+                        sx={{
+                            background: notificationDialog.type === 'success'
+                                ? 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)'
+                                : 'linear-gradient(135deg, #eb3349 0%, #f45c43 100%)'
+                        }}
+                    >
+                        {t('common.ok')}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </Box>
     )
 }
 

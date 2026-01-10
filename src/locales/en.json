@@ -72,9 +72,9 @@
         "temperature": "Temperature",
         "status": "Status",
         "issue": "Remarks",
-        "lower": "Lower",
+        "lower": "Bottom",
         "middle": "Middle",
-        "upper": "Upper",
+        "upper": "Top",
         "left": "Left",
         "right": "Right",
         "noData": "No data found"
@@ -102,5 +102,15 @@
         "saveError": "An error occurred while saving data. Please try again.",
         "deviceNotFound": "Device information not found!",
         "deviceError": "Error getting device information!"
+    },
+    "login": {
+        "header": "System Login",
+        "subtitle": "Please enter your card number to start",
+        "cardNumber": "Employee Card Number",
+        "rememberMe": "Remember Me",
+        "submit": "Login Now",
+        "errorCardEmpty": "Please enter card number!",
+        "errorInvalidCard": "Invalid card or no access permission!",
+        "errorSystem": "System error, please try again later!"
     }
 }

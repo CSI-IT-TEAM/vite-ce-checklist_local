@@ -102,5 +102,15 @@
         "saveError": "Có lỗi xảy ra khi lưu dữ liệu. Vui lòng thử lại.",
         "deviceNotFound": "Không tìm thấy thông tin thiết bị!",
         "deviceError": "Lỗi khi lấy thông tin thiết bị!"
+    },
+    "login": {
+        "header": "Đăng Nhập Hệ Thống",
+        "subtitle": "Vui lòng nhập số thẻ của bạn để bắt đầu",
+        "cardNumber": "Số Thẻ Nhân Viên",
+        "rememberMe": "Ghi nhớ đăng nhập",
+        "submit": "Đăng Nhập",
+        "errorCardEmpty": "Vui lòng nhập số thẻ!",
+        "errorInvalidCard": "Số thẻ không hợp lệ hoặc không có quyền truy cập!",
+        "errorSystem": "Lỗi hệ thống, vui lòng thử lại sau!"
     }
 }

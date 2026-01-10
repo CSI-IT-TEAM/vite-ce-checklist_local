@@ -105,15 +105,16 @@
     background: linear-gradient(135deg, #4F46E5 0%, #6366f1 100%) !important;
     border: none !important;
     border-radius: 16px 16px 0 0 !important;
-    padding: 16px !important;
+    padding: 12px 14px !important;
 }
 
 .react-datepicker__current-month {
     color: white !important;
-    font-size: 16px !important;
-    font-weight: 600 !important;
-    margin-bottom: 12px !important;
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    margin-bottom: 8px !important;
     text-transform: capitalize !important;
+    letter-spacing: 0.5px;
 }
 
 /* Navigation arrows */
@@ -133,25 +134,28 @@
 /* Day names */
 .react-datepicker__day-names {
     margin: 0 !important;
-    padding: 8px 0 4px !important;
-    background: rgba(255, 255, 255, 0.1) !important;
-    border-radius: 8px !important;
-    margin-top: 8px !important;
+    padding: 8px 0 !important;
+    background: #f8fafc !important;
+    /* Nền xám cực nhạt cho Light Mode */
+    border-bottom: 1px solid #e2e8f0 !important;
+    display: flex;
+    justify-content: space-around;
 }
 
 .react-datepicker__day-name {
-    color: rgba(255, 255, 255, 0.9) !important;
-    font-weight: 600 !important;
-    font-size: 12px !important;
-    width: 40px !important;
-    line-height: 32px !important;
-    margin: 2px !important;
+    color: #64748b !important;
+    /* Màu chữ xám chuyên nghiệp */
+    font-weight: 700 !important;
+    font-size: 11px !important;
+    width: 38px !important;
+    line-height: 24px !important;
+    margin: 0 !important;
     text-transform: uppercase !important;
 }
 
 /* Calendar body */
 .react-datepicker__month {
-    margin: 12px !important;
+    margin: 8px 12px 12px 12px !important;
     padding: 0 !important;
 }
 
@@ -326,6 +330,76 @@
     .react-datepicker__current-month {
         font-size: 14px !important;
     }
+}
+
+/* ========================================
+   DARK THEME SUPPORT
+   ======================================== */
+
+.dark-theme.react-datepicker {
+    background-color: #1a2027 !important;
+    color: #e5e7eb !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6) !important;
+}
+
+.dark-theme .react-datepicker__header {
+    background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.dark-theme .react-datepicker__day-names {
+    background: #2d3748 !important;
+    /* Nền xám đậm cho Dark Mode giống hình mẫu */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+.dark-theme .react-datepicker__day-name {
+    color: #94a3b8 !important;
+}
+
+.dark-theme .react-datepicker__day {
+    color: #cbd5e1 !important;
+}
+
+.dark-theme .react-datepicker__day:hover {
+    background: rgba(59, 130, 246, 0.2) !important;
+    color: #60a5fa !important;
+}
+
+.dark-theme .react-datepicker__day--selected,
+.dark-theme .react-datepicker__day--keyboard-selected {
+    background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%) !important;
+    color: white !important;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4) !important;
+}
+
+.dark-theme .react-datepicker__day--today {
+    background: rgba(245, 158, 11, 0.1) !important;
+    color: #fbbf24 !important;
+    border: 1px solid #d97706 !important;
+}
+
+.dark-theme .react-datepicker__day--outside-month {
+    color: #4b5563 !important;
+    opacity: 0.4 !important;
+}
+
+.dark-theme .react-datepicker__month-select,
+.dark-theme .react-datepicker__year-select {
+    background: rgba(0, 0, 0, 0.3) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.dark-theme .react-datepicker__month-select option,
+.dark-theme .react-datepicker__year-select option {
+    background: #1e293b !important;
+    color: #e2e8f0 !important;
+}
+
+.dark-theme .react-datepicker__today-button {
+    background: linear-gradient(135deg, #059669 0%, #10b981 100%) !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
 }
 
 /* Print styling */

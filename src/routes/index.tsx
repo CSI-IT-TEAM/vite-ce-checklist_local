@@ -35,6 +35,11 @@ export default function PageRouter() {
                                 <Dashboard />
                             </Suspense>
                         } />
+                        <Route path="/checklist" element={
+                            <Suspense fallback={<div>Loading...</div>}>
+                                <Dashboard />
+                            </Suspense>
+                        } />
                         <Route path="/temperature" element={
                             <Suspense fallback={<div>Loading...</div>}>
                                 <Temperature />

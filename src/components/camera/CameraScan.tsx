@@ -65,49 +65,69 @@ const CameraScan: React.FC<CameraScanProps> = ({
           </IconButton>
         </Box>
 
-        <Box className="s-camera-body">
+        <Box className={`s-camera-body ${error ? 'is-error' : ''}`}>
           {error ? (
             <Box className="s-camera-error-view">
-              <Box className="error-icon-wrapper">
-                <CameraAltRoundedIcon sx={{ fontSize: 60, color: '#999' }} />
+              {/* Icon Camera với hiệu ứng */}
+              <Box className="error-icon-container">
+                <Box className="error-icon-ring" />
+                <Box className="error-icon-wrapper">
+                  <CameraAltRoundedIcon className="camera-icon" />
+                </Box>
+                <Box className="error-slash" />
               </Box>
 
-              <Typography variant="h6" color="error" fontWeight="bold" align="center" sx={{ mt: 2 }}>
-                Không tìm thấy camera trên thiết bị này
+              {/* Tiêu đề lỗi */}
+              <Typography className="error-title">
+                Không thể truy cập Camera
               </Typography>
 
-              <Typography variant="caption" color="textSecondary" sx={{ mt: 0.5, mb: 3 }}>
-                Mã lỗi: {error}
+              <Typography className="error-subtitle">
+                Thiết bị không tìm thấy camera hoặc quyền truy cập bị từ chối
               </Typography>
 
+              {/* Hướng dẫn khắc phục */}
               <Box className="error-suggestions">
-                <Typography variant="subtitle2" fontWeight="bold" sx={{ mb: 1 }}>
-                  Thử các bước sau:
+                <Typography className="suggestions-title">
+                  💡 Hướng dẫn khắc phục:
                 </Typography>
-                <ul>
-                  <li>Kiểm tra quyền Camera trong cài đặt trình duyệt</li>
-                  <li>Đóng các app khác đang dùng camera</li>
-                  <li>Tải lại trang và cho phép camera</li>
-                </ul>
+                <Box className="suggestions-list">
+                  <Box className="suggestion-item">
+                    <span className="suggestion-number">1</span>
+                    <span>Kiểm tra quyền Camera trong cài đặt trình duyệt</span>
+                  </Box>
+                  <Box className="suggestion-item">
+                    <span className="suggestion-number">2</span>
+                    <span>Đóng các ứng dụng khác đang sử dụng camera</span>
+                  </Box>
+                  <Box className="suggestion-item">
+                    <span className="suggestion-number">3</span>
+                    <span>Tải lại trang và cấp quyền truy cập camera</span>
+                  </Box>
+                </Box>
               </Box>
 
-              <Button
-                variant="contained"
-                startIcon={<RefreshRoundedIcon />}
-                onClick={handleRetry}
-                className="retry-button"
-                sx={{
-                  mt: 3,
-                  px: 4,
-                  py: 1.5,
-                  borderRadius: '30px',
-                  background: 'linear-gradient(45deg, #6a11cb 0%, #2575fc 100%)',
-                  textTransform: 'none',
-                  fontSize: '1rem'
-                }}
-              >
-                Thử lại
-              </Button>
+              {/* Buttons */}
+              <Stack direction="row" spacing={2} sx={{ mt: 3, width: '100%' }}>
+                <Button
+                  variant="contained"
+                  startIcon={<RefreshRoundedIcon />}
+                  onClick={handleRetry}
+                  className="retry-button"
+                  fullWidth
+                >
+                  Thử lại
+                </Button>
+                <Button
+                  variant="outlined"
+                  startIcon={<RefreshRoundedIcon />}
+                  onClick={() => window.location.reload()}
+                  className="reload-button"
+                  fullWidth
+                >
+                  Tải lại trang
+                </Button>
+              </Stack>
             </Box>
           ) : (
             <Html5QrcodePlugin
