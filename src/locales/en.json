@@ -105,12 +105,12 @@
     },
     "login": {
         "header": "System Login",
-        "subtitle": "Please enter your card number to start",
-        "cardNumber": "Employee Number",
+        "subtitle": "Please enter your employee ID to start",
+        "cardNumber": "Employee ID",
         "rememberMe": "Remember Me",
         "submit": "Login Now",
-        "errorCardEmpty": "Please enter card number!",
-        "errorInvalidCard": "Invalid card or no access permission!",
+        "errorCardEmpty": "Please enter employee ID!",
+        "errorInvalidCard": "Invalid employee ID or no access permission!",
         "errorSystem": "System error, please try again later!"
     }
 }
