@@ -411,6 +411,7 @@ const History = () => {
                             borderRadius: 2,
                             px: { md: 4 },
                             py: { md: 1.2 },
+                            textTransform: 'none',
                             boxShadow: isDark ? '0 4px 20px rgba(66, 165, 245, 0.4)' : '0 4px 12px rgba(21, 101, 192, 0.3)',
                             '&:hover': {
                                 background: isDark
@@ -479,7 +480,17 @@ const History = () => {
                                             </>
                                         )}
                                         <TableCell align="center" sx={{ p: 0.5, borderRight: 1, borderRightColor: 'divider' }}>
-                                            <Chip size="small" label={row.isRow} color={row.isRow === 'Left' ? 'primary' : 'secondary'} variant="outlined" sx={{ fontSize: { xs: '0.6rem', md: '0.75rem' }, height: 20 }} />
+                                            <Chip
+                                                size="small"
+                                                label={row.isRow}
+                                                color={row.isRow === 'Left' ? 'primary' : 'secondary'}
+                                                variant="outlined"
+                                                sx={{
+                                                    fontSize: { xs: '0.6rem', md: '0.75rem' },
+                                                    height: 20,
+                                                    minWidth: 55 // Fixed width to make Left and Right sizes equal
+                                                }}
+                                            />
                                         </TableCell>
                                         {renderTemperatureCell(row.lower, 'lower', idx)}
                                         {renderTemperatureCell(row.middle, 'middle', idx)}

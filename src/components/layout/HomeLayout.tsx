@@ -315,7 +315,7 @@ const Home = () => {
                             {/* Language Section - Mobile Only inside menu */}
                             {isMobile && (
                                 <Box sx={{ mb: 2.5 }}>
-                                    <Typography variant="caption" color="text.secondary" align="center" sx={{ display: 'block', mb: 1, fontWeight: 700, textTransform: 'uppercase' }}>
+                                    <Typography variant="caption" color="text.secondary" align="center" sx={{ display: 'block', mb: 1, fontWeight: 700 }}>
                                         {t('common.language') || 'Ngôn ngữ'}
                                     </Typography>
                                     <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1.2 }}>
@@ -353,7 +353,7 @@ const Home = () => {
 
                             {/* Theme Toggle Section */}
                             <Box sx={{ mb: 2.5 }}>
-                                <Typography variant="caption" color="text.secondary" align="center" sx={{ display: 'block', mb: 1, fontWeight: 700, textTransform: 'uppercase' }}>
+                                <Typography variant="caption" color="text.secondary" align="center" sx={{ display: 'block', mb: 1, fontWeight: 700 }}>
                                     Theme
                                 </Typography>
                                 <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1.2 }}>

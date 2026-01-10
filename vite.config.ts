@@ -6,7 +6,7 @@ import basicSsl from '@vitejs/plugin-basic-ssl'
 export default defineConfig({
   plugins: [react(), basicSsl()],
   server: {
-    host: true,   // hoặc '0.0.0.0'
+    host: true,
     port: 5173,
     proxy: {
       '/api': {
@@ -15,16 +15,25 @@ export default defineConfig({
         secure: false,
       }
     }
+  },
+  build: {
+    chunkSizeWarningLimit: 1000,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('@mui')) {
+              return 'vendor-mui';
+            }
+            if (id.includes('react')) {
+              return 'vendor-react';
+            }
+            return 'vendor';
+          }
+        }
+      }
+    }
   }
-  // ,
-  // optimizeDeps: {
-  //   include: ['@mui/material', '@mui/icons-material', '@mui/styled-engine'],
-  // },
-  // build: {
-  //   commonjsOptions: {
-  //     include: [/node_modules/],
-  //   },
-  // },
 })
 
 
