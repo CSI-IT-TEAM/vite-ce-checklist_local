@@ -106,7 +106,7 @@
     "login": {
         "header": "System Login",
         "subtitle": "Please enter your card number to start",
-        "cardNumber": "Employee Card Number",
+        "cardNumber": "Employee Number",
         "rememberMe": "Remember Me",
         "submit": "Login Now",
         "errorCardEmpty": "Please enter card number!",

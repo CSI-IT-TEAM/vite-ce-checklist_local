@@ -127,9 +127,16 @@ const Home = () => {
     const handleLogout = () => {
         const cardNumber = localStorage.getItem('cardNumber')
         const rememberMe = localStorage.getItem('rememberMe')
+        const themeMode = localStorage.getItem('themeMode')
+        const language = localStorage.getItem('language')
+
         localStorage.clear()
+
         if (cardNumber) localStorage.setItem('cardNumber', cardNumber)
         if (rememberMe) localStorage.setItem('rememberMe', rememberMe)
+        if (themeMode) localStorage.setItem('themeMode', themeMode)
+        if (language) localStorage.setItem('language', language)
+
         navigate('/login')
     }
 
