@@ -164,7 +164,7 @@ const Login = () => {
                         <TextField
                             fullWidth
                             label={t('login.cardNumber')}
-                            placeholder="Ex: 00000001"
+                            placeholder=""
                             variant="outlined"
                             margin="normal"
                             value={cardNumber}
