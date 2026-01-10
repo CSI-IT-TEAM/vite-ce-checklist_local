@@ -135,42 +135,46 @@ const Login = () => {
                         {/* CSG Brand Logo */}
                         <Box
                             sx={{
-                                bgcolor: '#1a2744',
-                                p: { xs: 1.2, md: 2 },
+                                bgcolor: isDark ? 'white' : '#1a2744',
+                                p: { xs: 0.8, md: 1.2 },
                                 mx: 'auto',
                                 mb: 1.5,
                                 display: 'inline-flex',
                                 flexDirection: 'column',
                                 alignItems: 'center',
                                 borderRadius: 1.5,
-                                boxShadow: '0 15px 45px rgba(0,0,0,0.4)',
-                                border: '1px solid rgba(255,255,255,0.1)'
+                                boxShadow: isDark ? '0 8px 32px rgba(255,255,255,0.15)' : '0 15px 45px rgba(0,0,0,0.4)',
+                                border: isDark ? 'none' : '1px solid rgba(255,255,255,0.1)'
                             }}
                         >
-                            <Box sx={{ width: '100%', height: { xs: '4px', md: '5px' }, bgcolor: 'white', mb: { xs: 0.8, md: 1.2 }, borderRadius: '1.5px' }} />
+                            <Box sx={{ width: '100%', height: { xs: '6.5px', md: '8.5px' }, bgcolor: isDark ? '#1a2744' : 'white', mb: { xs: 0.7, md: 1 }, borderRadius: '2.5px' }} />
                             <Box sx={{
                                 display: 'flex',
                                 justifyContent: 'space-between',
                                 width: '100%'
                             }}>
-                                {['C', 'S', 'G'].map((char) => (
+                                {['C', 'S', 'G'].map((char, index) => (
                                     <Typography
                                         key={char}
                                         sx={{
-                                            color: 'white',
+                                            color: isDark ? '#1a2744' : 'white',
                                             fontWeight: 950,
-                                            fontSize: { xs: '2.2rem', md: '3.8rem' },
+                                            fontSize: { xs: '2.4rem', md: '4.1rem' },
                                             lineHeight: 1,
-                                            textAlign: 'center',
-                                            transform: 'scaleY(1.35)',
-                                            display: 'inline-block'
+                                            textAlign: index === 0 ? 'left' : index === 2 ? 'right' : 'center',
+                                            transform: 'scaleY(1.5)',
+                                            display: 'inline-block',
+                                            flex: 1,
+                                            // Căn lề âm cực nhỏ để bám sát mép tuyệt đối
+                                            ml: index === 0 ? '-0.05em' : 0,
+                                            mr: index === 2 ? '-0.05em' : 0
                                         }}
                                     >
                                         {char}
                                     </Typography>
                                 ))}
                             </Box>
-                            <Box sx={{ width: '100%', height: { xs: '4px', md: '5px' }, bgcolor: 'white', mt: { xs: 0.8, md: 1.2 }, borderRadius: '1.5px' }} />
+                            <Box sx={{ width: '100%', height: { xs: '6.5px', md: '8.5px' }, bgcolor: isDark ? '#1a2744' : 'white', mt: { xs: 0.7, md: 1 }, borderRadius: '2.5px' }} />
                         </Box>
 
                         {/* System Branding - Subtle & Integrated */}
@@ -225,9 +229,14 @@ const Login = () => {
                             margin="normal"
                             value={cardNumber}
                             onChange={(e) => {
-                                setCardNumber(e.target.value)
+                                const value = e.target.value.replace(/\D/g, '')
+                                setCardNumber(value)
                                 setValidationError('')
                                 setError('')
+                            }}
+                            inputProps={{
+                                inputMode: 'numeric',
+                                pattern: '[0-9]*'
                             }}
                             error={!!validationError || !!error}
                             disabled={isPending}

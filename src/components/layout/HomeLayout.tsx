@@ -46,6 +46,7 @@ import CloseIcon from '@mui/icons-material/Close'
 import LanguageIcon from '@mui/icons-material/Language'
 import PaletteIcon from '@mui/icons-material/Palette'
 import { type ReactElement, forwardRef } from 'react'
+import { ENV } from '../../api/config'
 
 const Transition = forwardRef(function Transition(
     props: any & { children: ReactElement<any, any> },
@@ -93,16 +94,23 @@ const Home = () => {
     const user = userData?.user?.[0] || userData
     const fallbackAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.nameEng || user?.NAME_ENG || 'User')}&background=6a11cb&color=fff`
 
-    const getPhotoUrl = (photoUrl: string | undefined): string => {
-        if (!photoUrl) return fallbackAvatar
-        return photoUrl
+    const getPhotoUrl = (photoUrl: any): string | undefined => {
+        if (!photoUrl || photoUrl === 'NULL' || photoUrl === 'none' || photoUrl === 'undefined') return undefined;
+        if (typeof photoUrl !== 'string') return undefined;
+        if (photoUrl.startsWith('http')) return photoUrl;
+
+        // Xử lý URL tương đối
+        const baseUrl = ENV.API_SERVER.endsWith('/') ? ENV.API_SERVER.slice(0, -1) : ENV.API_SERVER;
+        const path = photoUrl.startsWith('/') ? photoUrl : `/${photoUrl}`;
+        return `${baseUrl}${path}`;
     }
 
     const userInfo = {
         name: user?.nameEng || user?.NAME_ENG || user?.userName || user?.EMP_NAME || 'User',
         email: user?.deptName || user?.DEPT_NM || '',
         avatar: getPhotoUrl(user?.photo || user?.PHOTO_URL),
-        fallbackAvatar: fallbackAvatar
+        fallbackAvatar: fallbackAvatar,
+        initial: (user?.nameEng || user?.NAME_ENG || 'U').charAt(0).toUpperCase()
     }
 
     const languages = [
@@ -170,8 +178,8 @@ const Home = () => {
                         {/* CSG Brand Logo - Justified */}
                         <Box
                             sx={{
-                                bgcolor: '#1a2744',
-                                p: { xs: 0.5, sm: 0.6 },
+                                bgcolor: isDark ? 'white' : '#1a2744',
+                                p: { xs: 0.3, sm: 0.4 },
                                 mr: 1,
                                 display: 'flex',
                                 flexDirection: 'column',
@@ -180,30 +188,34 @@ const Home = () => {
                                 minWidth: { xs: 50, sm: 60 }
                             }}
                         >
-                            <Box sx={{ width: '100%', height: '2.5px', bgcolor: 'white', mb: 0.5, borderRadius: '0.5px' }} />
+                            <Box sx={{ width: '100%', height: '4px', bgcolor: isDark ? '#1a2744' : 'white', mb: 0.6, borderRadius: '1px' }} />
                             <Box sx={{
                                 display: 'flex',
                                 justifyContent: 'space-between',
                                 width: '100%'
                             }}>
-                                {['C', 'S', 'G'].map((char) => (
+                                {['C', 'S', 'G'].map((char, index) => (
                                     <Typography
                                         key={char}
                                         sx={{
-                                            color: 'white',
+                                            color: isDark ? '#1a2744' : 'white',
                                             fontWeight: 900,
-                                            fontSize: { xs: '1.1rem', sm: '1.3rem' },
+                                            fontSize: { xs: '1.2rem', sm: '1.4rem' },
                                             lineHeight: 1,
-                                            textAlign: 'center',
-                                            transform: 'scaleY(1.3)',
-                                            display: 'inline-block'
+                                            textAlign: index === 0 ? 'left' : index === 2 ? 'right' : 'center',
+                                            transform: 'scaleY(1.45)',
+                                            display: 'inline-block',
+                                            flex: 1,
+                                            // Chữ C bám lề trái, Chữ G bám lề phải tuyệt đối
+                                            ml: index === 0 ? '-0.05em' : 0,
+                                            mr: index === 2 ? '-0.05em' : 0
                                         }}
                                     >
                                         {char}
                                     </Typography>
                                 ))}
                             </Box>
-                            <Box sx={{ width: '100%', height: '2.5px', bgcolor: 'white', mt: 0.5, borderRadius: '0.5px' }} />
+                            <Box sx={{ width: '100%', height: '4px', bgcolor: isDark ? '#1a2744' : 'white', mt: 0.6, borderRadius: '1px' }} />
                         </Box>
                         <Box>
                             <Typography variant="subtitle2" fontWeight="bold" lineHeight={1.2} sx={{ fontSize: { xs: '0.95rem', sm: '1rem' } }}>
@@ -292,19 +304,23 @@ const Home = () => {
                             sx={{ p: 0.5 }}
                         >
                             <Avatar
-                                src={userInfo.avatar}
+                                src={userInfo.avatar || undefined}
                                 alt={userInfo.name}
                                 sx={{
                                     width: 40,
                                     height: 40,
-                                    border: '2px solid rgba(255,255,255,0.5)'
+                                    border: '2px solid rgba(255,255,255,0.5)',
+                                    bgcolor: isDark ? 'primary.dark' : 'primary.light',
+                                    fontWeight: 'bold'
                                 }}
                                 imgProps={{
                                     onError: (e) => {
                                         (e.target as HTMLImageElement).src = userInfo.fallbackAvatar
                                     }
                                 }}
-                            />
+                            >
+                                {userInfo.initial}
+                            </Avatar>
                         </IconButton>
                     </Tooltip>
 
@@ -541,14 +557,25 @@ const ProfileContent = ({ isMobile, userInfo, isDark, toggleTheme, language, cha
                 position: 'relative'
             }}>
                 <Avatar
-                    src={userInfo.avatar}
+                    src={userInfo.avatar || undefined}
+                    alt={userInfo.name}
                     sx={{
                         width: { xs: 46, md: 54 },
                         height: { xs: 46, md: 54 },
                         border: isDark ? '1.5px solid rgba(255,255,255,0.1)' : '1.5px solid rgba(0,0,0,0.05)',
-                        boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                        bgcolor: isDark ? 'primary.dark' : 'primary.light',
+                        fontSize: '1.2rem',
+                        fontWeight: 'bold'
                     }}
-                />
+                    imgProps={{
+                        onError: (e) => {
+                            (e.target as HTMLImageElement).src = userInfo.fallbackAvatar
+                        }
+                    }}
+                >
+                    {userInfo.initial}
+                </Avatar>
                 <Box sx={{ textAlign: 'left', flex: 1 }}>
                     <Typography variant="subtitle1" sx={{ fontWeight: 800, lineHeight: 1.2, fontSize: { xs: '0.9rem', md: '1.05rem' } }}>
                         {userInfo.name}
@@ -581,16 +608,25 @@ const ProfileContent = ({ isMobile, userInfo, isDark, toggleTheme, language, cha
                                 fullWidth
                                 size="small"
                                 sx={{
-                                    bgcolor: isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.01)',
+                                    bgcolor: 'transparent',
+                                    gap: 1,
                                     '& .MuiToggleButton-root': {
-                                        borderRadius: 1.5,
-                                        py: 0.6,
-                                        fontSize: '0.7rem',
-                                        border: '1px solid divider',
+                                        borderRadius: '12px !important',
+                                        py: 1,
+                                        fontSize: '0.75rem',
+                                        border: '1px solid !important',
+                                        borderColor: isDark ? 'rgba(255,255,255,0.1) !important' : 'rgba(0,0,0,0.08) !important',
+                                        color: isDark ? 'rgba(255,255,255,0.6)' : 'text.secondary',
+                                        transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                                         '&.Mui-selected': {
-                                            bgcolor: isDark ? 'rgba(21, 101, 192, 0.15)' : 'rgba(21, 101, 192, 0.08)',
-                                            color: isDark ? '#90caf9' : '#1565c0',
-                                            fontWeight: 700
+                                            bgcolor: isDark ? '#1565c0 !important' : '#1565c0 !important',
+                                            color: 'white !important',
+                                            fontWeight: 800,
+                                            boxShadow: '0 4px 12px rgba(21, 101, 192, 0.3)',
+                                            borderColor: 'transparent !important'
+                                        },
+                                        '&:hover': {
+                                            bgcolor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)',
                                         }
                                     }
                                 }}
@@ -624,16 +660,25 @@ const ProfileContent = ({ isMobile, userInfo, isDark, toggleTheme, language, cha
                                 fullWidth
                                 size="small"
                                 sx={{
-                                    bgcolor: isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.01)',
+                                    bgcolor: 'transparent',
+                                    gap: 1,
                                     '& .MuiToggleButton-root': {
-                                        borderRadius: 1.5,
-                                        py: 0.6,
-                                        fontSize: '0.7rem',
-                                        border: '1px solid divider',
+                                        borderRadius: '12px !important',
+                                        py: 1,
+                                        fontSize: '0.75rem',
+                                        border: '1px solid !important',
+                                        borderColor: isDark ? 'rgba(255,255,255,0.1) !important' : 'rgba(0,0,0,0.08) !important',
+                                        color: isDark ? 'rgba(255,255,255,0.6)' : 'text.secondary',
+                                        transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                                         '&.Mui-selected': {
-                                            bgcolor: isDark ? 'rgba(21, 101, 192, 0.15)' : 'rgba(21, 101, 192, 0.08)',
-                                            color: isDark ? '#90caf9' : '#1565c0',
-                                            fontWeight: 700
+                                            bgcolor: isDark ? '#1565c0 !important' : '#1565c0 !important',
+                                            color: 'white !important',
+                                            fontWeight: 800,
+                                            boxShadow: '0 4px 12px rgba(21, 101, 192, 0.3)',
+                                            borderColor: 'transparent !important'
+                                        },
+                                        '&:hover': {
+                                            bgcolor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)',
                                         }
                                     }
                                 }}

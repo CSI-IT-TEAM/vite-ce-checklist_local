@@ -30,9 +30,9 @@ const Checklist = () => {
             descKey: 'home.tempCardDesc',
             btnKey: 'home.tempCardBtn',
             gradient: isDark
-                ? 'linear-gradient(135deg, #f44336 0%, #d32f2f 100%)'
-                : 'linear-gradient(135deg, #ff5252 0%, #f44336 100%)',
-            glowColor: 'rgba(244, 67, 54, 0.4)'
+                ? 'linear-gradient(135deg, #6366f1 0%, #a855f7 100%)'
+                : 'linear-gradient(135deg, #818cf8 0%, #c084fc 100%)',
+            glowColor: isDark ? 'rgba(99, 102, 241, 0.4)' : 'rgba(129, 140, 248, 0.3)'
         },
         {
             id: 'history',
@@ -42,9 +42,9 @@ const Checklist = () => {
             descKey: 'home.historyCardDesc',
             btnKey: 'home.historyCardBtn',
             gradient: isDark
-                ? 'linear-gradient(135deg, #2196f3 0%, #1976d2 100%)'
-                : 'linear-gradient(135deg, #448aff 0%, #2979ff 100%)',
-            glowColor: 'rgba(33, 150, 243, 0.4)'
+                ? 'linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%)'
+                : 'linear-gradient(135deg, #38bdf8 0%, #3b82f6 100%)',
+            glowColor: isDark ? 'rgba(14, 165, 233, 0.4)' : 'rgba(56, 189, 248, 0.3)'
         }
     ]
 
