@@ -36,6 +36,24 @@ import DarkModeIcon from '@mui/icons-material/DarkMode'
 const drawerWidth = 240
 const collapsedWidth = 70
 
+import {
+    Dialog,
+    Zoom,
+    ToggleButton,
+    ToggleButtonGroup
+} from '@mui/material'
+import CloseIcon from '@mui/icons-material/Close'
+import LanguageIcon from '@mui/icons-material/Language'
+import PaletteIcon from '@mui/icons-material/Palette'
+import { type ReactElement, forwardRef } from 'react'
+
+const Transition = forwardRef(function Transition(
+    props: any & { children: ReactElement<any, any> },
+    ref: React.Ref<unknown>,
+) {
+    return <Zoom ref={ref} {...props} />;
+});
+
 const Home = () => {
     const navigate = useNavigate()
     const location = useLocation()
@@ -266,176 +284,72 @@ const Home = () => {
                         </IconButton>
                     </Tooltip>
 
-                    {/* User Menu Popover */}
-                    <Menu
-                        anchorEl={userAnchorEl}
-                        open={Boolean(userAnchorEl)}
-                        onClose={() => setUserAnchorEl(null)}
-                        disableScrollLock
-                        PaperProps={{
-                            sx: {
-                                borderRadius: 3,
-                                minWidth: 280,
-                                mt: 1.5,
-                                overflow: 'hidden',
-                                boxShadow: '0 10px 40px rgba(0,0,0,0.15)',
-                                border: '1px solid rgba(0,0,0,0.05)'
-                            }
-                        }}
-                    >
-                        {/* Profile Header (Blue Gradient) */}
-                        <Box sx={{
-                            background: 'linear-gradient(135deg, #0081f1 0%, #0069c0 100%)',
-                            p: 2.5,
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            color: 'white',
-                            textAlign: 'center'
-                        }}>
-                            <Avatar
-                                src={userInfo.avatar}
-                                sx={{
-                                    width: 72,
-                                    height: 72,
-                                    border: '3px solid rgba(255,255,255,0.3)',
-                                    mb: 1.5,
-                                    boxShadow: '0 4px 10px rgba(0,0,0,0.1)'
-                                }}
+                    {/* User Profile Menu/Dialog */}
+                    {isMobile ? (
+                        <Dialog
+                            open={Boolean(userAnchorEl)}
+                            onClose={() => setUserAnchorEl(null)}
+                            TransitionComponent={Transition}
+                            keepMounted
+                            PaperProps={{
+                                sx: {
+                                    borderRadius: 4,
+                                    width: '85%',
+                                    maxWidth: 340,
+                                    bgcolor: isDark ? '#1e293b' : '#ffffff',
+                                    backgroundImage: 'none',
+                                    boxShadow: isDark ? '0 20px 50px rgba(0,0,0,0.5)' : '0 20px 50px rgba(0,0,0,0.15)',
+                                    overflow: 'hidden'
+                                }
+                            }}
+                        >
+                            <ProfileContent
+                                isMobile={true}
+                                userInfo={userInfo}
+                                isDark={isDark}
+                                toggleTheme={toggleTheme}
+                                language={language}
+                                changeLanguage={changeLanguage}
+                                languages={languages}
+                                handleLogout={handleLogout}
+                                close={() => setUserAnchorEl(null)}
+                                t={t}
                             />
-                            <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 0.2 }}>
-                                {userInfo.name}
-                            </Typography>
-                            <Typography variant="caption" sx={{ opacity: 0.9, letterSpacing: 0.5, fontWeight: 500 }}>
-                                {userInfo.email || 'EMPLOYEE'}
-                            </Typography>
-                        </Box>
-
-                        <Box sx={{ p: 2 }}>
-                            {/* Language Section - Mobile Only inside menu */}
-                            {isMobile && (
-                                <Box sx={{ mb: 2.5 }}>
-                                    <Typography variant="caption" color="text.secondary" align="center" sx={{ display: 'block', mb: 1, fontWeight: 700 }}>
-                                        {t('common.language') || 'Ngôn ngữ'}
-                                    </Typography>
-                                    <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1.2 }}>
-                                        {languages.map((lang) => (
-                                            <Box
-                                                key={lang.code}
-                                                onClick={() => {
-                                                    changeLanguage(lang.code as 'en' | 'vn')
-                                                    setUserAnchorEl(null)
-                                                }}
-                                                sx={{
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'center',
-                                                    gap: 1,
-                                                    p: 1.2,
-                                                    borderRadius: 2,
-                                                    border: language === lang.code ? '1.5px solid #1565c0' : '1px solid #e0e0e0',
-                                                    bgcolor: language === lang.code ? 'rgba(21, 101, 192, 0.05)' : 'transparent',
-                                                    cursor: 'pointer',
-                                                    transition: 'all 0.2s',
-                                                    '&:hover': { bgcolor: language === lang.code ? 'rgba(21, 101, 192, 0.08)' : 'rgba(0,0,0,0.02)' }
-                                                }}
-                                            >
-                                                <img src={lang.flag} alt="" style={{ width: 22, height: 16, borderRadius: 1 }} />
-                                                <Typography variant="body2" fontWeight={language === lang.code ? 700 : 500} color={language === lang.code ? 'primary' : 'text.primary'}>
-                                                    {lang.name}
-                                                </Typography>
-                                            </Box>
-                                        ))}
-                                    </Box>
-                                    <Divider sx={{ mt: 2.5 }} />
-                                </Box>
-                            )}
-
-                            {/* Theme Toggle Section */}
-                            <Box sx={{ mb: 2.5 }}>
-                                <Typography variant="caption" color="text.secondary" align="center" sx={{ display: 'block', mb: 1, fontWeight: 700 }}>
-                                    Theme
-                                </Typography>
-                                <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1.2 }}>
-                                    <Box
-                                        onClick={() => {
-                                            if (isDark) toggleTheme()
-                                            setUserAnchorEl(null)
-                                        }}
-                                        sx={{
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            gap: 1,
-                                            p: 1.2,
-                                            borderRadius: 2,
-                                            border: !isDark ? '1.5px solid #1565c0' : '1px solid #e0e0e0',
-                                            bgcolor: !isDark ? 'rgba(21, 101, 192, 0.05)' : 'transparent',
-                                            cursor: 'pointer',
-                                            transition: 'all 0.2s',
-                                            '&:hover': { bgcolor: !isDark ? 'rgba(21, 101, 192, 0.08)' : 'rgba(0,0,0,0.02)' }
-                                        }}
-                                    >
-                                        <LightModeIcon sx={{ fontSize: 18, color: !isDark ? '#1565c0' : 'text.secondary' }} />
-                                        <Typography variant="body2" fontWeight={!isDark ? 700 : 500} color={!isDark ? 'primary' : 'text.primary'}>
-                                            Light
-                                        </Typography>
-                                    </Box>
-                                    <Box
-                                        onClick={() => {
-                                            if (!isDark) toggleTheme()
-                                            setUserAnchorEl(null)
-                                        }}
-                                        sx={{
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            gap: 1,
-                                            p: 1.2,
-                                            borderRadius: 2,
-                                            border: isDark ? '1.5px solid #1565c0' : '1px solid #e0e0e0',
-                                            bgcolor: isDark ? 'rgba(21, 101, 192, 0.05)' : 'transparent',
-                                            cursor: 'pointer',
-                                            transition: 'all 0.2s',
-                                            '&:hover': { bgcolor: isDark ? 'rgba(21, 101, 192, 0.08)' : 'rgba(0,0,0,0.02)' }
-                                        }}
-                                    >
-                                        <DarkModeIcon sx={{ fontSize: 18, color: isDark ? '#1565c0' : 'text.secondary' }} />
-                                        <Typography variant="body2" fontWeight={isDark ? 700 : 500} color={isDark ? 'primary' : 'text.primary'}>
-                                            Dark
-                                        </Typography>
-                                    </Box>
-                                </Box>
-                                <Divider sx={{ mt: 2.5 }} />
-                            </Box>
-
-                            {/* Logout Action */}
-                            <Box
-                                onClick={handleLogout}
-                                sx={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    gap: 1.2,
-                                    p: 1.5,
-                                    borderRadius: 2,
-                                    background: 'linear-gradient(135deg, #ef5350 0%, #d32f2f 100%)',
-                                    color: 'white',
-                                    cursor: 'pointer',
-                                    transition: 'all 0.2s',
-                                    boxShadow: '0 4px 15px rgba(211, 47, 47, 0.25)',
-                                    '&:hover': {
-                                        boxShadow: '0 6px 20px rgba(211, 47, 47, 0.35)',
-                                        transform: 'translateY(-1px)'
-                                    },
-                                    '&:active': { transform: 'translateY(0)' }
-                                }}
-                            >
-                                <LogoutRoundedIcon sx={{ fontSize: 20 }} />
-                                <Typography fontWeight="bold" sx={{ fontSize: '0.95rem' }}>{t('common.logout')}</Typography>
-                            </Box>
-                        </Box>
-                    </Menu>
+                        </Dialog>
+                    ) : (
+                        <Menu
+                            anchorEl={userAnchorEl}
+                            open={Boolean(userAnchorEl)}
+                            onClose={() => setUserAnchorEl(null)}
+                            disableScrollLock
+                            transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                            anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                            PaperProps={{
+                                sx: {
+                                    borderRadius: 3,
+                                    minWidth: 320,
+                                    mt: 1.5,
+                                    overflow: 'hidden',
+                                    boxShadow: '0 10px 40px rgba(0,0,0,0.15)',
+                                    border: '1px solid rgba(0,0,0,0.05)',
+                                    bgcolor: isDark ? '#1e293b' : '#ffffff'
+                                }
+                            }}
+                        >
+                            <ProfileContent
+                                isMobile={false}
+                                userInfo={userInfo}
+                                isDark={isDark}
+                                toggleTheme={toggleTheme}
+                                language={language}
+                                changeLanguage={changeLanguage}
+                                languages={languages}
+                                handleLogout={handleLogout}
+                                close={() => setUserAnchorEl(null)}
+                                t={t}
+                            />
+                        </Menu>
+                    )}
                 </Toolbar>
             </AppBar>
 
@@ -592,6 +506,166 @@ const Home = () => {
                     </BottomNavigation>
                 </Paper>
             )}
+        </Box>
+    )
+}
+
+// Sub-component for Profile Content to avoid duplication
+const ProfileContent = ({ isMobile, userInfo, isDark, toggleTheme, language, changeLanguage, languages, handleLogout, close, t }: any) => {
+    return (
+        <Box>
+            {/* Header with Background Gradient */}
+            <Box sx={{
+                background: isDark
+                    ? 'linear-gradient(135deg, #1e3a5f 0%, #132f4c 100%)'
+                    : 'linear-gradient(135deg, #1565c0 0%, #1976d2 100%)',
+                p: { xs: 2, md: 3 },
+                display: 'flex',
+                alignItems: 'center',
+                gap: 2,
+                color: 'white',
+                position: 'relative'
+            }}>
+                <Avatar
+                    src={userInfo.avatar}
+                    sx={{
+                        width: { xs: 54, md: 70 },
+                        height: { xs: 54, md: 70 },
+                        border: '2px solid rgba(255,255,255,0.4)',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+                    }}
+                />
+                <Box sx={{ textAlign: 'left', flex: 1 }}>
+                    <Typography variant="h6" sx={{ fontWeight: 800, lineHeight: 1.2, fontSize: { xs: '1rem', md: '1.2rem' } }}>
+                        {userInfo.name}
+                    </Typography>
+                    <Typography variant="caption" sx={{ opacity: 0.85, fontWeight: 500, letterSpacing: 0.5, textTransform: 'uppercase', fontSize: '0.65rem' }}>
+                        {userInfo.email || 'EMPLOYEE'}
+                    </Typography>
+                </Box>
+                <IconButton onClick={close} sx={{ position: 'absolute', top: 8, right: 8, color: 'white', opacity: 0.7 }}>
+                    <CloseIcon sx={{ fontSize: 18 }} />
+                </IconButton>
+            </Box>
+
+            <Box sx={{ p: { xs: 2, md: 2.5 } }}>
+                {/* Compact Settings Section */}
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mb: 2.5 }}>
+                    {/* Language Selection */}
+                    {isMobile && (
+                        <Box>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.8 }}>
+                                <LanguageIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
+                                <Typography variant="caption" fontWeight={700} color="text.secondary" sx={{ textTransform: 'uppercase', fontSize: '0.6rem' }}>
+                                    {t('common.language')}
+                                </Typography>
+                            </Box>
+                            <ToggleButtonGroup
+                                value={language}
+                                exclusive
+                                onChange={(_, v) => v && changeLanguage(v)}
+                                fullWidth
+                                size="small"
+                                sx={{
+                                    bgcolor: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
+                                    '& .MuiToggleButton-root': {
+                                        borderRadius: 2,
+                                        py: 0.8,
+                                        fontSize: '0.75rem',
+                                        border: '1px solid divider',
+                                        '&.Mui-selected': {
+                                            bgcolor: isDark ? 'rgba(21, 101, 192, 0.2)' : 'rgba(21, 101, 192, 0.1)',
+                                            color: isDark ? '#90caf9' : '#1565c0',
+                                            fontWeight: 700
+                                        }
+                                    }
+                                }}
+                            >
+                                {languages.map((lang: any) => (
+                                    <ToggleButton key={lang.code} value={lang.code} sx={{ gap: 0.8 }}>
+                                        <img src={lang.flag} alt="" style={{ width: 18, height: 12, borderRadius: 1 }} />
+                                        {lang.name}
+                                    </ToggleButton>
+                                ))}
+                            </ToggleButtonGroup>
+                        </Box>
+                    )}
+
+                    {/* Theme Selection */}
+                    <Box>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.8 }}>
+                            <PaletteIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
+                            <Typography variant="caption" fontWeight={700} color="text.secondary" sx={{ textTransform: 'uppercase', fontSize: '0.6rem' }}>
+                                Theme
+                            </Typography>
+                        </Box>
+                        <ToggleButtonGroup
+                            value={isDark ? 'dark' : 'light'}
+                            exclusive
+                            onChange={(_, v) => {
+                                if (v === 'dark' && !isDark) toggleTheme()
+                                if (v === 'light' && isDark) toggleTheme()
+                            }}
+                            fullWidth
+                            size="small"
+                            sx={{
+                                bgcolor: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
+                                '& .MuiToggleButton-root': {
+                                    borderRadius: 2,
+                                    py: 0.8,
+                                    fontSize: '0.75rem',
+                                    border: '1px solid divider',
+                                    '&.Mui-selected': {
+                                        bgcolor: isDark ? 'rgba(21, 101, 192, 0.2)' : 'rgba(21, 101, 192, 0.1)',
+                                        color: isDark ? '#90caf9' : '#1565c0',
+                                        fontWeight: 700
+                                    }
+                                }
+                            }}
+                        >
+                            <ToggleButton value="light" sx={{ gap: 0.8 }}>
+                                <LightModeIcon sx={{ fontSize: 16 }} /> Light
+                            </ToggleButton>
+                            <ToggleButton value="dark" sx={{ gap: 0.8 }}>
+                                <DarkModeIcon sx={{ fontSize: 16 }} /> Dark
+                            </ToggleButton>
+                        </ToggleButtonGroup>
+                    </Box>
+                </Box>
+
+                <Divider sx={{ mb: 2 }} />
+
+                {/* Logout Button */}
+                <Box
+                    onClick={() => {
+                        handleLogout()
+                        close()
+                    }}
+                    sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: 1,
+                        p: 1.5,
+                        borderRadius: 2,
+                        background: 'linear-gradient(135deg, #ef5350 0%, #d32f2f 100%)',
+                        color: 'white',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                        boxShadow: '0 4px 12px rgba(211, 47, 47, 0.2)',
+                        '&:hover': {
+                            boxShadow: '0 8px 20px rgba(211, 47, 47, 0.3)',
+                            transform: 'translateY(-1px)'
+                        },
+                        '&:active': { transform: 'translateY(1px)' }
+                    }}
+                >
+                    <LogoutRoundedIcon sx={{ fontSize: 18 }} />
+                    <Typography fontWeight={800} sx={{ fontSize: '0.9rem', letterSpacing: 0.5 }}>
+                        {t('common.logout')}
+                    </Typography>
+                </Box>
+            </Box>
         </Box>
     )
 }
