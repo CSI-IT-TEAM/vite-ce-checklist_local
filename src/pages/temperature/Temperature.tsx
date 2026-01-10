@@ -500,23 +500,23 @@ const Temperature = ({ userData: propUserData }: TemperatureProps) => {
             <Box sx={{ textAlign: 'left', mb: { xs: 3, md: 5 } }}>
                 <Typography
                     variant="h5"
-                    fontWeight="bold"
-                    sx={{ color: 'primary.main', mb: 0.5, fontSize: { xs: '1.3rem', md: '1.8rem' } }}
+                    fontWeight={800}
+                    sx={{ color: 'primary.main', mb: 0.5, fontSize: { xs: '1.15rem', md: '1.9rem' }, letterSpacing: '-0.02em' }}
                 >
                     {t('temperature.title')}
                 </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.85rem', md: '1rem' } }}>
+                <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.7rem', md: '1.05rem' }, fontWeight: 500 }}>
                     {t('temperature.subtitle')}
                 </Typography>
             </Box>
 
             {/* Form Section */}
-            <Paper elevation={1} sx={{ p: { xs: 2, md: 3 }, borderRadius: 2, mb: 2 }}>
-                <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2, color: 'primary.main', fontSize: { xs: '0.9rem', md: '1.2rem' } }}>
+            <Paper elevation={1} sx={{ p: { xs: 1.5, md: 1.8 }, borderRadius: 3, mb: 2 }}>
+                <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 1.5, color: 'primary.main', fontSize: { xs: '0.9rem', md: '1.2rem' } }}>
                     {t('temperature.inspectionInfo')}
                 </Typography>
 
-                <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: '1fr 1fr 1fr' }, gap: 2 }}>
+                <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: '1fr 1fr 1fr' }, gap: 1.5 }}>
                     <FormControl fullWidth size="small" disabled>
                         <InputLabel>{t('temperature.area')}</InputLabel>
                         <Select value={area} onChange={handleAreaChange} label={t('temperature.area')}>

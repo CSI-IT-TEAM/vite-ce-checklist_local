@@ -69,7 +69,7 @@ const Checklist = () => {
                     fontWeight={800}
                     sx={{
                         color: 'text.primary',
-                        fontSize: { xs: '1.5rem', md: '3rem' },
+                        fontSize: { xs: '1.15rem', md: '1.9rem' },
                         mb: 0.5,
                         letterSpacing: '-0.02em',
                         background: isDark
@@ -82,10 +82,10 @@ const Checklist = () => {
                     {t('home.title')}
                 </Typography>
                 <Typography
-                    variant="h6"
+                    variant="body2"
                     sx={{
                         color: 'text.secondary',
-                        fontSize: { xs: '0.8rem', md: '1.25rem' },
+                        fontSize: { xs: '0.7rem', md: '1.05rem' },
                         fontWeight: 500,
                         maxWidth: 600,
                         lineHeight: 1.4

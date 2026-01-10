@@ -363,11 +363,15 @@ const History = () => {
         <Box sx={{ pb: 0 }}>
             {/* Header - Left Aligned */}
             {/* Header - Minimal Spacing */}
-            <Box sx={{ textAlign: 'left', mb: 1.5 }}>
-                <Typography variant="h5" fontWeight="bold" sx={{ color: 'primary.main', mb: 0.2, fontSize: { xs: '1.2rem', md: '1.5rem' } }}>
+            <Box sx={{ textAlign: 'left', mb: 2 }}>
+                <Typography
+                    variant="h5"
+                    fontWeight={800}
+                    sx={{ color: 'primary.main', mb: 0.5, fontSize: { xs: '1.15rem', md: '1.9rem' }, letterSpacing: '-0.02em' }}
+                >
                     {t('history.title')}
                 </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.8rem', md: '0.95rem' } }}>
+                <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.7rem', md: '1.05rem' }, fontWeight: 500 }}>
                     {t('history.subtitle')}
                 </Typography>
             </Box>
