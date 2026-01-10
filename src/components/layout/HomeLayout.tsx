@@ -457,12 +457,27 @@ const Home = () => {
                             if (item) handleMenuClick(item.path)
                         }}
                         sx={{
-                            height: 65,
+                            height: 70,
+                            bgcolor: isDark ? '#0f172a' : '#ffffff',
                             '& .MuiBottomNavigationAction-root': {
-                                color: 'text.secondary',
+                                color: isDark ? 'rgba(255,255,255,0.5)' : 'text.secondary',
                                 minWidth: 'auto',
+                                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                '& .MuiBottomNavigationAction-label': {
+                                    fontSize: '0.75rem',
+                                    fontWeight: 500,
+                                    mt: 0.5
+                                },
                                 '&.Mui-selected': {
-                                    color: '#1565c0'
+                                    color: '#1565c0',
+                                    '& .MuiBottomNavigationAction-label': {
+                                        fontSize: '0.8rem',
+                                        fontWeight: 800,
+                                    },
+                                    '& .MuiSvgIcon-root': {
+                                        transform: 'scale(1.2) translateY(-2px)',
+                                        color: '#1565c0'
+                                    }
                                 }
                             }
                         }}

@@ -10,97 +10,126 @@
     align-items: center;
     justify-content: center;
     overscroll-behavior: contain;
-    backdrop-filter: blur(4px);
+    backdrop-filter: blur(8px);
     transition: all 0.3s ease;
-    padding: 30px 20px; // Thêm padding để popup không sát mép
+    padding: 20px;
     box-sizing: border-box;
 
+    &.is-dark {
+        .s-camera-content {
+            background: #1e293b;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+        }
+
+        .s-camera-error-view {
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+        }
+
+        .error-suggestions {
+            background: rgba(255, 255, 255, 0.03);
+            border-color: rgba(255, 255, 255, 0.1);
+            color: #94a3b8;
+        }
+
+        .suggestions-title {
+            color: #60a5fa !important;
+        }
+
+        .suggestion-item {
+            color: #94a3b8 !important;
+        }
+    }
+
+    &.is-light {
+        .s-camera-content {
+            background: #f8fafc;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .s-camera-error-view {
+            background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+        }
+    }
+
     &-content {
-        background: #fff;
-        border-radius: 20px;
+        background: #fff; // Fallback
+        border-radius: 24px;
         overflow: hidden;
         position: relative;
-        width: 90vw;
-        max-width: 450px;
-        max-height: calc(100vh - 40px); // Đảm bảo có khoảng cách với mép màn hình
-        margin: 20px; // Thêm margin để không bị sát mép
+        width: 100%;
+        max-width: 400px;
         display: flex;
         flex-direction: column;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
         animation: scannerEntry 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-        transition: all 0.3s ease;
+        transition: background-color 0.3s ease;
 
         &.is-error {
-            background: #fdfdfe;
-            max-height: calc(100vh - 60px); // Giới hạn chiều cao khi lỗi
-            overflow-y: auto; // Cho phép scroll khi nội dung quá dài
+            max-height: 90vh;
         }
     }
 
     &-header {
-        padding: 16px 20px; // Tăng padding để header không sát mép trên
+        padding: 14px 20px;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        border-bottom: 1px solid #f0f0f0;
         flex-shrink: 0;
     }
 
     &-body {
         position: relative;
-        background: #000;
-        width: calc(100% - 24px);
-        margin: 0 auto 12px auto;
+        background: transparent;
+        width: 100%;
+        padding: 16px 16px 12px 16px;
         display: flex;
         align-items: center;
         justify-content: center;
-        border-radius: 24px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        aspect-ratio: 1 / 1;
-        overflow: hidden;
+        box-sizing: border-box;
 
-        // Khi hiển thị error, bỏ giới hạn để buttons hiển thị đầy đủ
+        .qr-scanner-container {
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            width: 100%;
+            aspect-ratio: 1 / 1;
+        }
+
         &.is-error {
             background: transparent;
             aspect-ratio: unset;
-            overflow: visible;
-            box-shadow: none;
             width: 100%;
             margin: 0;
             border-radius: 0;
+            box-shadow: none;
         }
     }
 
     &-footer {
         padding: 20px;
-        background: #fafafa;
-        border-top: 1px solid #f0f0f0;
         flex-shrink: 0;
+        transition: background-color 0.3s ease;
     }
 
     &-error-view {
-        padding: 20px 20px 24px;
+        padding: 24px 20px;
         display: flex;
         flex-direction: column;
         align-items: center;
         width: 100%;
-        justify-content: flex-start;
-        background: linear-gradient(180deg, #fff 0%, #f8fafc 100%);
-        border-radius: 0 0 20px 20px;
+        transition: background-color 0.3s ease;
 
-        // Icon Container - thu nhỏ lại
         .error-icon-container {
             position: relative;
-            width: 72px;
-            height: 72px;
-            margin-bottom: 16px;
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
 
             .error-icon-ring {
                 position: absolute;
                 width: 100%;
                 height: 100%;
                 border-radius: 50%;
-                border: 2px solid #fee2e2;
+                border: 2px solid rgba(239, 68, 68, 0.2);
                 animation: ringPulse 2s ease-in-out infinite;
             }
 
@@ -108,15 +137,14 @@
                 position: absolute;
                 width: 100%;
                 height: 100%;
-                background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+                background: rgba(239, 68, 68, 0.1);
                 border-radius: 50%;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                box-shadow: 0 4px 16px rgba(239, 68, 68, 0.12);
 
                 .camera-icon {
-                    font-size: 32px;
+                    font-size: 36px;
                     color: #ef4444;
                 }
             }
@@ -124,113 +152,102 @@
             .error-slash {
                 position: absolute;
                 width: 3px;
-                height: 56px;
-                background: linear-gradient(180deg, #ef4444 0%, #dc2626 100%);
-                border-radius: 2px;
+                height: 60px;
+                background: #ef4444;
                 top: 50%;
                 left: 50%;
                 transform: translate(-50%, -50%) rotate(-45deg);
-                box-shadow: 0 2px 6px rgba(239, 68, 68, 0.25);
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
             }
         }
 
-        // Tiêu đề - thu nhỏ
         .error-title {
-            font-size: 1.05rem;
-            font-weight: 700;
-            color: #dc2626;
-            text-align: center;
-            margin-bottom: 4px;
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: #ef4444;
+            margin-bottom: 6px;
         }
 
         .error-subtitle {
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             color: #64748b;
             text-align: center;
-            margin-bottom: 16px;
-            max-width: 260px;
-            line-height: 1.4;
+            margin-bottom: 20px;
+            line-height: 1.5;
         }
 
-        // Box hướng dẫn - compact hơn
         .error-suggestions {
             width: 100%;
-            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-            border: 1px solid #bae6fd;
-            border-radius: 12px;
-            padding: 14px 16px;
+            background: #f1f5f9;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 24px;
 
             .suggestions-title {
                 font-size: 0.85rem;
-                font-weight: 600;
-                color: #0369a1;
-                margin-bottom: 10px;
+                font-weight: 700;
+                color: #1e293b;
+                margin-bottom: 12px;
+                display: block;
             }
 
             .suggestions-list {
                 display: flex;
                 flex-direction: column;
-                gap: 8px;
+                gap: 10px;
             }
 
             .suggestion-item {
                 display: flex;
                 align-items: center;
-                gap: 10px;
+                gap: 12px;
                 font-size: 0.8rem;
-                color: #334155;
-                line-height: 1.35;
+                color: #475569;
 
                 .suggestion-number {
-                    flex-shrink: 0;
-                    width: 18px;
-                    height: 18px;
-                    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+                    width: 20px;
+                    height: 20px;
+                    background: #3b82f6;
                     color: white;
                     border-radius: 50%;
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    font-size: 0.65rem;
-                    font-weight: 600;
-                    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+                    font-size: 0.7rem;
+                    font-weight: 700;
                 }
             }
         }
 
-        // Buttons - compact và cùng hàng
-        .retry-button,
-        .reload-button {
-            border-radius: 10px;
-            padding: 10px 16px;
-            text-transform: none;
-            font-weight: 600;
-            font-size: 0.85rem;
-            white-space: nowrap;
-            min-width: 0;
-            transition: all 0.2s ease;
-        }
-
         .retry-button {
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-            box-shadow: 0 3px 10px rgba(59, 130, 246, 0.3);
-
-            &:hover {
-                transform: translateY(-1px);
-                box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4);
-            }
+            background: #3b82f6;
+            border-radius: 12px;
+            padding: 12px;
+            font-weight: 700;
+            text-transform: none;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
         }
 
         .reload-button {
-            color: #3b82f6;
-            border-color: #93c5fd;
-            background: rgba(59, 130, 246, 0.04);
-
-            &:hover {
-                background: rgba(59, 130, 246, 0.1);
-                border-color: #3b82f6;
-            }
+            border-radius: 12px;
+            padding: 12px;
+            font-weight: 700;
+            text-transform: none;
+            border-color: rgba(59, 130, 246, 0.3);
         }
+    }
+}
+
+@keyframes scannerEntry {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
     }
 }
 
@@ -241,41 +258,12 @@
     }
 
     50% {
-        transform: scale(1.15);
+        transform: scale(1.2);
         opacity: 0.3;
     }
 
     100% {
         transform: scale(1);
         opacity: 0.8;
-    }
-}
-
-@keyframes pulse {
-    0% {
-        transform: scale(1);
-        box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.1);
-    }
-
-    70% {
-        transform: scale(1.05);
-        box-shadow: 0 0 0 10px rgba(0, 0, 0, 0);
-    }
-
-    100% {
-        transform: scale(1);
-        box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
-    }
-}
-
-@keyframes scannerEntry {
-    from {
-        opacity: 0;
-        transform: scale(0.85) translateY(20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: scale(1) translateY(0);
     }
 }

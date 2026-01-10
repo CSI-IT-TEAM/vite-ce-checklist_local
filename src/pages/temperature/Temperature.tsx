@@ -702,16 +702,17 @@ const Temperature = ({ userData: propUserData }: TemperatureProps) => {
                     onClick={resetForm}
                     sx={{
                         borderRadius: 3,
-                        px: { xs: 2, md: 5 },
+                        minWidth: { xs: 130, md: 180 },
                         py: { xs: 1, md: 1.5 },
-                        borderColor: 'primary.main',
-                        color: 'primary.main',
+                        borderColor: '#ef5350',
+                        color: '#ef5350',
                         textTransform: 'none',
                         fontWeight: 'bold',
                         fontSize: { xs: '0.9rem', md: '1.1rem' },
                         '&:hover': {
-                            borderColor: 'primary.dark',
-                            bgcolor: isDark ? 'rgba(100, 181, 246, 0.08)' : 'rgba(21, 101, 192, 0.04)'
+                            borderColor: '#d32f2f',
+                            color: '#d32f2f',
+                            bgcolor: isDark ? 'rgba(239, 83, 80, 0.08)' : 'rgba(239, 83, 80, 0.04)'
                         }
                     }}
                 >
@@ -724,7 +725,7 @@ const Temperature = ({ userData: propUserData }: TemperatureProps) => {
                     onClick={handleSubmit}
                     sx={{
                         borderRadius: 3,
-                        px: { xs: 4, md: 7 },
+                        minWidth: { xs: 130, md: 180 },
                         py: { xs: 1, md: 1.5 },
                         background: isDark
                             ? 'linear-gradient(135deg, #42a5f5 0%, #1976d2 100%)'
