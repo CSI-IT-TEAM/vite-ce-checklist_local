@@ -251,15 +251,25 @@ const Login = () => {
                                     height: 60,
                                     fontSize: '1.1rem',
                                     fontWeight: 600,
-                                    bgcolor: isDark ? 'rgba(0,0,0,0.2)' : 'rgba(0,0,0,0.02)',
+                                    bgcolor: 'transparent',
                                     '& fieldset': {
                                         borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
                                     },
                                     '&:hover fieldset': {
                                         borderColor: 'primary.main',
                                     },
+                                    '&.Mui-focused fieldset': {
+                                        borderWidth: '2px',
+                                        borderColor: 'primary.main',
+                                    },
                                     '& input': {
                                         color: 'text.primary',
+                                        // Fix autofill background color
+                                        '&:-webkit-autofill': {
+                                            WebkitBoxShadow: `0 0 0 1000px ${isDark ? '#1e293b' : '#ffffff'} inset !important`,
+                                            WebkitTextFillColor: isDark ? '#ffffff' : '#000000 !important',
+                                            transition: 'background-color 5000s ease-in-out 0s',
+                                        }
                                     },
                                     '& input::placeholder': {
                                         color: 'text.secondary',
