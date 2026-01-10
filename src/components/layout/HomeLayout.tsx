@@ -518,12 +518,12 @@ const Home = () => {
                 component="main"
                 sx={{
                     flexGrow: 1,
-                    p: { xs: 1.5, sm: 3, md: 4 },
+                    p: { xs: 1.5, sm: 2, md: 2.5 },
                     width: '100%',
                     minHeight: '100vh',
-                    maxWidth: { md: 1600 }, // Giới hạn chiều rộng trên màn hình lớn
+                    maxWidth: { md: 1600 },
                     mx: 'auto',
-                    pb: { xs: 10, sm: 3 }
+                    pb: { xs: 10, sm: 1 }
                 }}
             >
                 <Toolbar /> {/* Spacer for AppBar */}

@@ -351,20 +351,22 @@ const History = () => {
     }
 
     return (
-        <Box sx={{ pb: 4 }}>
+        <Box sx={{ pb: 0 }}>
             {/* Header - Left Aligned */}
-            <Box sx={{ textAlign: 'left', mb: { xs: 3, md: 5 } }}>
-                <Typography variant="h5" fontWeight="bold" sx={{ color: 'primary.main', mb: 0.5, fontSize: { xs: '1.3rem', md: '1.8rem' } }}>
+            {/* Header - Minimal Spacing */}
+            <Box sx={{ textAlign: 'left', mb: 1.5 }}>
+                <Typography variant="h5" fontWeight="bold" sx={{ color: 'primary.main', mb: 0.2, fontSize: { xs: '1.2rem', md: '1.5rem' } }}>
                     {t('history.title')}
                 </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.85rem', md: '1.1rem' } }}>
+                <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.8rem', md: '0.95rem' } }}>
                     {t('history.subtitle')}
                 </Typography>
             </Box>
 
             {/* Filters */}
-            <Paper elevation={2} sx={{ p: { xs: 2, md: 3 }, borderRadius: 3, mb: 3 }}>
-                <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: 'repeat(4, 1fr)' }, gap: 2, mb: 2 }}>
+            {/* Filters - Minimal Layout */}
+            <Paper elevation={2} sx={{ p: { xs: 1.5, md: 1.8 }, borderRadius: 3, mb: 1.5 }}>
+                <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: 'repeat(4, 1fr)' }, gap: 1.5, mb: 1.5 }}>
                     <CustomDatePicker selected={startDate} onChange={setStartDate} label={t('history.fromDate')} />
                     <CustomDatePicker selected={endDate} onChange={setEndDate} label={t('history.toDate')} />
                     <FormControl fullWidth size="small">
@@ -380,7 +382,7 @@ const History = () => {
                         </Select>
                     </FormControl>
                 </Box>
-                <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: 'repeat(4, 1fr)' }, gap: 2 }}>
+                <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: 'repeat(4, 1fr)' }, gap: 1.5 }}>
                     <FormControl fullWidth size="small">
                         <InputLabel>{t('temperature.line')}</InputLabel>
                         <Select value={line} onChange={handleLineChange} label={t('temperature.line')}>
@@ -401,7 +403,8 @@ const History = () => {
                     </FormControl>
                     <Button
                         variant="contained"
-                        startIcon={isSearching ? <CircularProgress size={20} color="inherit" /> : <SearchIcon />}
+                        fullWidth
+                        startIcon={isSearching ? <CircularProgress size={18} color="inherit" /> : <SearchIcon />}
                         onClick={handleSearch}
                         disabled={isSearching}
                         sx={{
@@ -409,15 +412,13 @@ const History = () => {
                                 ? 'linear-gradient(135deg, #42a5f5 0%, #1976d2 100%)'
                                 : 'linear-gradient(135deg, #1e88e5 0%, #1565c0 100%)',
                             borderRadius: 2,
-                            px: { md: 4 },
-                            py: { md: 1.2 },
                             textTransform: 'none',
-                            boxShadow: isDark ? '0 4px 20px rgba(66, 165, 245, 0.4)' : '0 4px 12px rgba(21, 101, 192, 0.3)',
+                            fontWeight: 'bold',
+                            boxShadow: isDark ? '0 4px 15px rgba(66, 165, 245, 0.3)' : '0 4px 10px rgba(21, 101, 192, 0.2)',
                             '&:hover': {
                                 background: isDark
                                     ? 'linear-gradient(135deg, #64b5f6 0%, #1e88e5 100%)'
                                     : 'linear-gradient(135deg, #1565c0 0%, #0d47a1 100%)',
-                                boxShadow: isDark ? '0 6px 25px rgba(66, 165, 245, 0.5)' : '0 6px 16px rgba(21, 101, 192, 0.4)',
                             }
                         }}
                     >
@@ -438,11 +439,11 @@ const History = () => {
 
             {/* Table View */}
             {(!isMobile || viewMode === 'grid') && (
-                <Paper elevation={2} sx={{ borderRadius: 3, overflow: 'hidden', mb: 2 }}>
-                    <TableContainer sx={{ maxHeight: 500 }}>
+                <Paper elevation={2} sx={{ borderRadius: 3, overflow: 'hidden', mb: 1 }}>
+                    <TableContainer sx={{ maxHeight: { xs: 500, md: 650 } }}>
                         <Table size="small" stickyHeader>
                             <TableHead>
-                                <TableRow sx={{ '& th': { background: isDark ? '#1e3a5f' : '#1565c0', color: 'white', fontWeight: 'bold', fontSize: { xs: '0.65rem', md: '0.95rem' }, py: { xs: 1, md: 2 }, textAlign: 'center', borderRight: '1px solid rgba(255,255,255,0.2)', px: 0.5 } }}>
+                                <TableRow sx={{ '& th': { background: isDark ? '#1e3a5f' : '#1565c0', color: 'white', fontWeight: 'bold', fontSize: { xs: '0.65rem', md: '0.95rem' }, height: { xs: 40, md: 50 }, px: 0.5, py: 0, textAlign: 'center', borderRight: '1px solid rgba(255,255,255,0.2)', position: 'sticky', top: 0, zIndex: 10 } }}>
                                     <TableCell rowSpan={2} sx={{ minWidth: { xs: 42, md: 80 } }}>{t('history.date')}</TableCell>
                                     <TableCell rowSpan={2} sx={{ minWidth: { xs: 60, md: 100 } }}>{t('history.inspector')}</TableCell>
                                     <TableCell rowSpan={2} sx={{ minWidth: { xs: 100, md: 180 } }}>{t('history.area')}</TableCell>
@@ -452,7 +453,7 @@ const History = () => {
                                     <TableCell colSpan={2} align="center">{t('history.middle')}</TableCell>
                                     <TableCell colSpan={2} align="center" sx={{ borderRight: 'none' }}>{t('history.upper')}</TableCell>
                                 </TableRow>
-                                <TableRow sx={{ '& th': { background: '#1e88e5', color: 'white', fontSize: { xs: '0.6rem', md: '0.85rem' }, textAlign: 'center', borderRight: '1px solid rgba(255,255,255,0.2)', px: 0.5, py: 0.5 } }}>
+                                <TableRow sx={{ '& th': { background: '#1e88e5', color: 'white', fontSize: { xs: '0.6rem', md: '0.85rem' }, textAlign: 'center', borderRight: '1px solid rgba(255,255,255,0.2)', px: 0.5, py: 0.5, position: 'sticky', top: { xs: 40, md: 50 }, zIndex: 10 } }}>
                                     <TableCell>{t('history.temperature')}</TableCell>
                                     <TableCell>{t('history.issue')}</TableCell>
                                     <TableCell>{t('history.temperature')}</TableCell>
@@ -646,11 +647,11 @@ const History = () => {
                 </Box>
             )}
 
-            {/* Pagination */}
+            {/* Pagination - Minimal Spacing */}
             {dataForPagination.length > 0 && (
-                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1.5, mt: 2, mb: 4 }}>
-                    <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600 }}>
-                        {indexOfFirstItem + 1} - {Math.min(indexOfLastItem, dataForPagination.length)} / {dataForPagination.length}
+                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0.8, mt: 1, mb: 2 }}>
+                    <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600, fontSize: '0.75rem' }}>
+                        {validCurrentPage} / {totalPages}
                     </Typography>
                     <Pagination
                         count={totalPages}
