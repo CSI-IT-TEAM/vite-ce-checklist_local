@@ -84,6 +84,20 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
                 divider: 'rgba(255, 255, 255, 0.12)'
             })
         },
+        typography: {
+            fontFamily: '"Inter", "Be Vietnam Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+            h1: { fontWeight: 800 },
+            h2: { fontWeight: 800 },
+            h3: { fontWeight: 700 },
+            h4: { fontWeight: 700 },
+            h5: { fontWeight: 700 },
+            h6: { fontWeight: 700 },
+            subtitle1: { fontWeight: 600 },
+            subtitle2: { fontWeight: 600 },
+            body1: { fontWeight: 400 },
+            body2: { fontWeight: 400 },
+            button: { fontWeight: 700, textTransform: 'none' }
+        },
         components: {
             MuiCssBaseline: {
                 styleOverrides: {
