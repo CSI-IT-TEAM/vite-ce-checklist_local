@@ -169,7 +169,7 @@ const Home = () => {
                     <Box
                         sx={{
                             display: 'flex',
-                            alignItems: 'center',
+                            alignItems: 'stretch',
                             cursor: 'pointer',
                             flexGrow: 1
                         }}
@@ -180,15 +180,15 @@ const Home = () => {
                             sx={{
                                 bgcolor: isDark ? 'white' : '#1a2744',
                                 p: { xs: 0.3, sm: 0.4 },
-                                mr: 1,
+                                mr: 0.0,
                                 display: 'flex',
                                 flexDirection: 'column',
                                 alignItems: 'center',
-                                borderRadius: 0.5,
-                                minWidth: { xs: 50, sm: 60 }
+                                borderRadius: '4px',
+                                minWidth: { xs: 45, sm: 55 }
                             }}
                         >
-                            <Box sx={{ width: '100%', height: '4px', bgcolor: isDark ? '#1a2744' : 'white', mb: 0.6, borderRadius: '1px' }} />
+                            <Box sx={{ width: '100%', height: '3px', bgcolor: isDark ? '#1a2744' : 'white', mb: 0.4, borderRadius: '1px' }} />
                             <Box sx={{
                                 display: 'flex',
                                 justifyContent: 'space-between',
@@ -215,13 +215,31 @@ const Home = () => {
                                     </Typography>
                                 ))}
                             </Box>
-                            <Box sx={{ width: '100%', height: '4px', bgcolor: isDark ? '#1a2744' : 'white', mt: 0.6, borderRadius: '1px' }} />
+                            <Box sx={{ width: '100%', height: '3px', bgcolor: isDark ? '#1a2744' : 'white', mt: 0.4, borderRadius: '1px' }} />
                         </Box>
-                        <Box>
-                            <Typography variant="subtitle2" fontWeight="bold" lineHeight={1.2} sx={{ fontSize: { xs: '0.95rem', sm: '1rem' } }}>
+                        <Box sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'space-between',
+                            py: { xs: 0.3, sm: 0.4 },
+                            ml: 0.8
+                        }}>
+                            <Typography variant="subtitle2" fontWeight="bold" sx={{
+                                fontSize: { xs: '0.9rem', sm: '1rem' },
+                                lineHeight: 0.7,
+                                transform: 'scaleY(1.3)',
+                                transformOrigin: 'top'
+                            }}>
                                 CE Temperature Checklist
                             </Typography>
-                            <Typography variant="caption" sx={{ opacity: 0.85, display: 'block', fontSize: { xs: '0.7rem', sm: '0.75rem' } }}>
+                            <Typography variant="caption" sx={{
+                                opacity: 0.85,
+                                display: 'block',
+                                fontSize: { xs: '0.65rem', sm: '0.7rem' },
+                                lineHeight: 0.7,
+                                transform: 'scaleY(1.3)',
+                                transformOrigin: 'bottom'
+                            }}>
                                 Management System
                             </Typography>
                         </Box>
