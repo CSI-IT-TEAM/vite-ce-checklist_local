@@ -37,7 +37,6 @@ const drawerWidth = 240
 const collapsedWidth = 70
 
 import {
-    Dialog,
     Zoom,
     ToggleButton,
     ToggleButtonGroup
@@ -284,72 +283,45 @@ const Home = () => {
                         </IconButton>
                     </Tooltip>
 
-                    {/* User Profile Menu/Dialog */}
-                    {isMobile ? (
-                        <Dialog
-                            open={Boolean(userAnchorEl)}
-                            onClose={() => setUserAnchorEl(null)}
-                            TransitionComponent={Transition}
-                            keepMounted
-                            PaperProps={{
-                                sx: {
-                                    borderRadius: 4,
-                                    width: '85%',
-                                    maxWidth: 340,
-                                    bgcolor: isDark ? '#1e293b' : '#ffffff',
-                                    backgroundImage: 'none',
-                                    boxShadow: isDark ? '0 20px 50px rgba(0,0,0,0.5)' : '0 20px 50px rgba(0,0,0,0.15)',
-                                    overflow: 'hidden'
-                                }
-                            }}
-                        >
-                            <ProfileContent
-                                isMobile={true}
-                                userInfo={userInfo}
-                                isDark={isDark}
-                                toggleTheme={toggleTheme}
-                                language={language}
-                                changeLanguage={changeLanguage}
-                                languages={languages}
-                                handleLogout={handleLogout}
-                                close={() => setUserAnchorEl(null)}
-                                t={t}
-                            />
-                        </Dialog>
-                    ) : (
-                        <Menu
-                            anchorEl={userAnchorEl}
-                            open={Boolean(userAnchorEl)}
-                            onClose={() => setUserAnchorEl(null)}
-                            disableScrollLock
-                            transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-                            anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-                            PaperProps={{
-                                sx: {
-                                    borderRadius: 3,
-                                    minWidth: 320,
-                                    mt: 1.5,
-                                    overflow: 'hidden',
-                                    boxShadow: '0 10px 40px rgba(0,0,0,0.15)',
-                                    border: '1px solid rgba(0,0,0,0.05)',
-                                    bgcolor: isDark ? '#1e293b' : '#ffffff'
-                                }
-                            }}
-                        >
-                            <ProfileContent
-                                isMobile={false}
-                                userInfo={userInfo}
-                                isDark={isDark}
-                                toggleTheme={toggleTheme}
-                                language={language}
-                                changeLanguage={changeLanguage}
-                                languages={languages}
-                                handleLogout={handleLogout}
-                                close={() => setUserAnchorEl(null)}
-                                t={t}
-                            />
-                        </Menu>
-                    )}
+                    {/* User Profile Menu - Unified Floating Card at Top-Right */}
+                    <Menu
+                        anchorEl={userAnchorEl}
+                        open={Boolean(userAnchorEl)}
+                        onClose={() => setUserAnchorEl(null)}
+                        disableScrollLock
+                        TransitionComponent={Transition}
+                        MenuListProps={{ disablePadding: true, sx: { p: 0 } }}
+                        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                        PaperProps={{
+                            sx: {
+                                borderRadius: 4,
+                                p: 0,
+                                width: { xs: 'calc(100vw - 32px)', sm: 340 },
+                                maxWidth: 340,
+                                mt: 1.5,
+                                overflow: 'hidden',
+                                boxShadow: isDark ? '0 20px 60px rgba(0,0,0,0.6)' : '0 20px 60px rgba(0,0,0,0.15)',
+                                border: '1px solid',
+                                borderColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
+                                bgcolor: isDark ? '#1e293b' : '#ffffff',
+                                backgroundImage: 'none',
+                            }
+                        }}
+                    >
+                        <ProfileContent
+                            isMobile={isMobile}
+                            userInfo={userInfo}
+                            isDark={isDark}
+                            toggleTheme={toggleTheme}
+                            language={language}
+                            changeLanguage={changeLanguage}
+                            languages={languages}
+                            handleLogout={handleLogout}
+                            close={() => setUserAnchorEl(null)}
+                            t={t}
+                        />
+                    </Menu>
                 </Toolbar>
             </AppBar>
 
@@ -513,50 +485,52 @@ const Home = () => {
 // Sub-component for Profile Content to avoid duplication
 const ProfileContent = ({ isMobile, userInfo, isDark, toggleTheme, language, changeLanguage, languages, handleLogout, close, t }: any) => {
     return (
-        <Box>
-            {/* Header with Background Gradient */}
+        <Box sx={{ overflow: 'hidden' }}>
+            {/* Header - Premium Gradient Section */}
             <Box sx={{
                 background: isDark
                     ? 'linear-gradient(135deg, #1e3a5f 0%, #132f4c 100%)'
-                    : 'linear-gradient(135deg, #1565c0 0%, #1976d2 100%)',
-                p: { xs: 2, md: 3 },
+                    : 'linear-gradient(135deg, #1e88e5 0%, #1565c0 100%)',
+                borderBottom: '1px solid',
+                borderColor: 'rgba(255,255,255,0.1)',
+                p: { xs: 1.5, md: 2 },
                 display: 'flex',
                 alignItems: 'center',
-                gap: 2,
+                gap: 1.5,
                 color: 'white',
                 position: 'relative'
             }}>
                 <Avatar
                     src={userInfo.avatar}
                     sx={{
-                        width: { xs: 54, md: 70 },
-                        height: { xs: 54, md: 70 },
-                        border: '2px solid rgba(255,255,255,0.4)',
-                        boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+                        width: { xs: 46, md: 54 },
+                        height: { xs: 46, md: 54 },
+                        border: isDark ? '1.5px solid rgba(255,255,255,0.1)' : '1.5px solid rgba(0,0,0,0.05)',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
                     }}
                 />
                 <Box sx={{ textAlign: 'left', flex: 1 }}>
-                    <Typography variant="h6" sx={{ fontWeight: 800, lineHeight: 1.2, fontSize: { xs: '1rem', md: '1.2rem' } }}>
+                    <Typography variant="subtitle1" sx={{ fontWeight: 800, lineHeight: 1.2, fontSize: { xs: '0.9rem', md: '1.05rem' } }}>
                         {userInfo.name}
                     </Typography>
-                    <Typography variant="caption" sx={{ opacity: 0.85, fontWeight: 500, letterSpacing: 0.5, textTransform: 'uppercase', fontSize: '0.65rem' }}>
+                    <Typography variant="caption" sx={{ opacity: 0.7, fontWeight: 600, letterSpacing: 0.5, textTransform: 'uppercase', fontSize: '0.6rem' }}>
                         {userInfo.email || 'EMPLOYEE'}
                     </Typography>
                 </Box>
-                <IconButton onClick={close} sx={{ position: 'absolute', top: 8, right: 8, color: 'white', opacity: 0.7 }}>
-                    <CloseIcon sx={{ fontSize: 18 }} />
+                <IconButton onClick={close} sx={{ position: 'absolute', top: 4, right: 4, opacity: 0.5 }}>
+                    <CloseIcon sx={{ fontSize: 16 }} />
                 </IconButton>
             </Box>
 
-            <Box sx={{ p: { xs: 2, md: 2.5 } }}>
+            <Box sx={{ p: { xs: 1.5, md: 2 }, pt: 0.5 }}>
                 {/* Compact Settings Section */}
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mb: 2.5 }}>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, mb: 1.5 }}>
                     {/* Language Selection */}
                     {isMobile && (
                         <Box>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.8 }}>
-                                <LanguageIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
-                                <Typography variant="caption" fontWeight={700} color="text.secondary" sx={{ textTransform: 'uppercase', fontSize: '0.6rem' }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                                <LanguageIcon sx={{ fontSize: 14, color: 'text.secondary', opacity: 0.8 }} />
+                                <Typography variant="caption" fontWeight={700} color="text.secondary" sx={{ fontSize: '0.6rem' }}>
                                     {t('common.language')}
                                 </Typography>
                             </Box>
@@ -567,14 +541,14 @@ const ProfileContent = ({ isMobile, userInfo, isDark, toggleTheme, language, cha
                                 fullWidth
                                 size="small"
                                 sx={{
-                                    bgcolor: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
+                                    bgcolor: isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.01)',
                                     '& .MuiToggleButton-root': {
-                                        borderRadius: 2,
-                                        py: 0.8,
-                                        fontSize: '0.75rem',
+                                        borderRadius: 1.5,
+                                        py: 0.6,
+                                        fontSize: '0.7rem',
                                         border: '1px solid divider',
                                         '&.Mui-selected': {
-                                            bgcolor: isDark ? 'rgba(21, 101, 192, 0.2)' : 'rgba(21, 101, 192, 0.1)',
+                                            bgcolor: isDark ? 'rgba(21, 101, 192, 0.15)' : 'rgba(21, 101, 192, 0.08)',
                                             color: isDark ? '#90caf9' : '#1565c0',
                                             fontWeight: 700
                                         }
@@ -582,8 +556,8 @@ const ProfileContent = ({ isMobile, userInfo, isDark, toggleTheme, language, cha
                                 }}
                             >
                                 {languages.map((lang: any) => (
-                                    <ToggleButton key={lang.code} value={lang.code} sx={{ gap: 0.8 }}>
-                                        <img src={lang.flag} alt="" style={{ width: 18, height: 12, borderRadius: 1 }} />
+                                    <ToggleButton key={lang.code} value={lang.code} sx={{ gap: 0.6 }}>
+                                        <img src={lang.flag} alt="" style={{ width: 16, height: 11, borderRadius: 0.5 }} />
                                         {lang.name}
                                     </ToggleButton>
                                 ))}
@@ -593,9 +567,9 @@ const ProfileContent = ({ isMobile, userInfo, isDark, toggleTheme, language, cha
 
                     {/* Theme Selection */}
                     <Box>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.8 }}>
-                            <PaletteIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
-                            <Typography variant="caption" fontWeight={700} color="text.secondary" sx={{ textTransform: 'uppercase', fontSize: '0.6rem' }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                            <PaletteIcon sx={{ fontSize: 14, color: 'text.secondary', opacity: 0.8 }} />
+                            <Typography variant="caption" fontWeight={700} color="text.secondary" sx={{ fontSize: '0.6rem' }}>
                                 Theme
                             </Typography>
                         </Box>
@@ -609,31 +583,31 @@ const ProfileContent = ({ isMobile, userInfo, isDark, toggleTheme, language, cha
                             fullWidth
                             size="small"
                             sx={{
-                                bgcolor: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
+                                bgcolor: isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.01)',
                                 '& .MuiToggleButton-root': {
-                                    borderRadius: 2,
-                                    py: 0.8,
-                                    fontSize: '0.75rem',
+                                    borderRadius: 1.5,
+                                    py: 0.6,
+                                    fontSize: '0.7rem',
                                     border: '1px solid divider',
                                     '&.Mui-selected': {
-                                        bgcolor: isDark ? 'rgba(21, 101, 192, 0.2)' : 'rgba(21, 101, 192, 0.1)',
+                                        bgcolor: isDark ? 'rgba(21, 101, 192, 0.15)' : 'rgba(21, 101, 192, 0.08)',
                                         color: isDark ? '#90caf9' : '#1565c0',
                                         fontWeight: 700
                                     }
                                 }
                             }}
                         >
-                            <ToggleButton value="light" sx={{ gap: 0.8 }}>
-                                <LightModeIcon sx={{ fontSize: 16 }} /> Light
+                            <ToggleButton value="light" sx={{ gap: 0.6 }}>
+                                <LightModeIcon sx={{ fontSize: 14 }} /> Light
                             </ToggleButton>
-                            <ToggleButton value="dark" sx={{ gap: 0.8 }}>
-                                <DarkModeIcon sx={{ fontSize: 16 }} /> Dark
+                            <ToggleButton value="dark" sx={{ gap: 0.6 }}>
+                                <DarkModeIcon sx={{ fontSize: 14 }} /> Dark
                             </ToggleButton>
                         </ToggleButtonGroup>
                     </Box>
                 </Box>
 
-                <Divider sx={{ mb: 2 }} />
+                <Divider sx={{ mb: 1.5 }} />
 
                 {/* Logout Button */}
                 <Box
