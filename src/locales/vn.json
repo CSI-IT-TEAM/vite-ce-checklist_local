@@ -32,7 +32,7 @@
     },
     "temperature": {
         "title": "Kiểm Tra Nhiệt Độ bồn Chamber Hằng Ngày",
-        "subtitle": "Kiểm tra và quản lý lịch PM của CE cho mỗi bồn chamber của nhà xưởng",
+        "subtitle": "Kiểm tra và quản lý lịch PM của CE cho bồn chamber của xưởng",
         "personalInfo": "Thông Tin Cá Nhân",
         "department": "Phòng Ban",
         "idCard": "Số Thẻ",

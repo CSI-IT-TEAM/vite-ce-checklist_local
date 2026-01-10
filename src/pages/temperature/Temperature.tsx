@@ -501,7 +501,7 @@ const Temperature = ({ userData: propUserData }: TemperatureProps) => {
                 <Typography
                     variant="h5"
                     fontWeight={800}
-                    sx={{ color: 'primary.main', mb: 0.5, fontSize: { xs: '1.15rem', md: '1.9rem' }, letterSpacing: '-0.02em' }}
+                    sx={{ color: 'primary.main', mb: 0.5, fontSize: { xs: '1.05rem', md: '1.7rem' }, letterSpacing: '-0.02em' }}
                 >
                     {t('temperature.title')}
                 </Typography>

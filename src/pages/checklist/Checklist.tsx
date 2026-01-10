@@ -6,8 +6,7 @@ import {
     Card,
     CardContent,
     Typography,
-    Button,
-    Container
+    Button
 } from '@mui/material'
 import ThermostatAutoIcon from '@mui/icons-material/ThermostatAuto'
 import HistoryIcon from '@mui/icons-material/History'
@@ -50,7 +49,7 @@ const Checklist = () => {
     ]
 
     return (
-        <Container maxWidth="xl" sx={{ py: { xs: 1, md: 8 }, px: { xs: 1, md: 3 } }}>
+        <Box sx={{ py: { xs: 1, md: 3 }, pb: 4 }}>
             {/* Header Section */}
             <Box sx={{ mb: { xs: 1.5, md: 8 }, position: 'relative' }}>
                 <Box sx={{
@@ -69,7 +68,7 @@ const Checklist = () => {
                     fontWeight={800}
                     sx={{
                         color: 'text.primary',
-                        fontSize: { xs: '1.15rem', md: '1.9rem' },
+                        fontSize: { xs: '1.05rem', md: '1.7rem' },
                         mb: 0.5,
                         letterSpacing: '-0.02em',
                         background: isDark
@@ -79,7 +78,7 @@ const Checklist = () => {
                         WebkitTextFillColor: 'transparent'
                     }}
                 >
-                    {t('home.title')}
+                    {/* {t('home.title')} */}
                 </Typography>
                 <Typography
                     variant="body2"
@@ -91,7 +90,7 @@ const Checklist = () => {
                         lineHeight: 1.4
                     }}
                 >
-                    {t('home.subtitle')}
+                    {/* {t('home.subtitle')} */}
                 </Typography>
             </Box>
 
@@ -111,7 +110,7 @@ const Checklist = () => {
                         key={card.id}
                         onClick={() => handleNavigation(card.path)}
                         sx={{
-                            borderRadius: 6,
+                            borderRadius: 3,
                             overflow: 'visible', // Để đổ bóng lan ra ngoài
                             cursor: 'pointer',
                             transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
@@ -133,8 +132,8 @@ const Checklist = () => {
                         {/* Interactive Top Header */}
                         <Box sx={{
                             position: 'relative',
-                            height: { xs: 80, md: 180 },
-                            borderRadius: { xs: '12px 12px 0 0', md: '24px 24px 0 0' },
+                            height: { xs: 60, md: 120 },
+                            borderRadius: { xs: '12px 12px 0 0', md: '12px 12px 0 0' },
                             overflow: 'hidden',
                             background: card.gradient,
                             display: 'flex',
@@ -159,13 +158,13 @@ const Checklist = () => {
                             </Box>
                         </Box>
 
-                        <CardContent sx={{ p: { xs: 2.5, md: 5 } }}>
+                        <CardContent sx={{ p: { xs: 1.5, md: 1.8 } }}>
                             <Typography
                                 variant="h4"
                                 fontWeight={800}
                                 sx={{
-                                    mb: { xs: 1, md: 1.5 },
-                                    fontSize: { xs: '1.2rem', md: '2rem' },
+                                    mb: { xs: 0.5, md: 1 },
+                                    fontSize: { xs: '1.05rem', md: '1.4rem' },
                                     letterSpacing: '-0.02em',
                                     color: 'text.primary'
                                 }}
@@ -176,10 +175,10 @@ const Checklist = () => {
                                 variant="body1"
                                 color="text.secondary"
                                 sx={{
-                                    mb: { xs: 2, md: 4 },
-                                    fontSize: { xs: '0.75rem', md: '1.1rem' },
+                                    mb: { xs: 1.5, md: 2.5 },
+                                    fontSize: { xs: '0.7rem', md: '0.9rem' },
                                     lineHeight: 1.4,
-                                    height: { md: 60 } // Đối xứng giữa các card
+                                    height: { md: 40 } // Đối xứng giữa các card
                                 }}
                             >
                                 {t(card.descKey)}
@@ -188,14 +187,14 @@ const Checklist = () => {
                             <Button
                                 fullWidth
                                 variant="contained"
-                                endIcon={<ArrowForwardIcon sx={{ fontSize: { xs: 18, md: 24 } }} />}
+                                endIcon={<ArrowForwardIcon sx={{ fontSize: { xs: 14, md: 18 } }} />}
                                 sx={{
-                                    py: { xs: 1.2, md: 2 },
-                                    borderRadius: { xs: 2.5, md: 4 },
+                                    py: { xs: 0.8, md: 1.2 },
+                                    borderRadius: 2,
                                     background: card.gradient,
                                     textTransform: 'none',
                                     fontWeight: 800,
-                                    fontSize: { xs: '0.85rem', md: '1.1rem' },
+                                    fontSize: { xs: '0.75rem', md: '0.9rem' },
                                     boxShadow: `0 10px 20px ${card.glowColor}`,
                                     transition: 'all 0.3s ease',
                                     '&:hover': {
@@ -226,7 +225,7 @@ const Checklist = () => {
                     Professional Management System • {new Date().getFullYear()}
                 </Typography>
             </Box> */}
-        </Container>
+        </Box>
     )
 }
 

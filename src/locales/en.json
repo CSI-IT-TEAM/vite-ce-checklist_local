@@ -32,7 +32,7 @@
     },
     "temperature": {
         "title": "Daily Chamber Tank Temperature Check",
-        "subtitle": "Check and manage CE PM schedule for each chamber tank in the factory",
+        "subtitle": "Check and manage CE PM schedule for chamber tank in the workshop",
         "personalInfo": "Personal Information",
         "department": "Department",
         "idCard": "ID Card",

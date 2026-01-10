@@ -313,7 +313,6 @@ const History = () => {
                             fontSize: { xs: '0.65rem', md: '0.8rem' },
                             height: { xs: 20, md: 24 },
                             minWidth: { xs: 55, md: 70 },
-                            borderStyle: 'dashed',
                             borderColor: '#1976d2',
                             color: '#1976d2',
                             fontWeight: 'bold',
@@ -347,10 +346,9 @@ const History = () => {
                         variant="outlined"
                         sx={{
                             fontSize: { xs: '0.65rem', md: '0.8rem' },
-                            height: { xs: 22, md: 26 },
-                            fontWeight: 800,
+                            height: { xs: 20, md: 24 },
+                            fontWeight: 'bold',
                             bgcolor: data.CHECK_STATUS === 'Pass' ? 'rgba(46, 125, 50, 0.04)' : 'rgba(211, 47, 47, 0.04)',
-                            borderWidth: '1.5px',
                             letterSpacing: '0.5px'
                         }}
                     />
@@ -367,7 +365,7 @@ const History = () => {
                 <Typography
                     variant="h5"
                     fontWeight={800}
-                    sx={{ color: 'primary.main', mb: 0.5, fontSize: { xs: '1.15rem', md: '1.9rem' }, letterSpacing: '-0.02em' }}
+                    sx={{ color: 'primary.main', mb: 0.5, fontSize: { xs: '1.05rem', md: '1.7rem' }, letterSpacing: '-0.02em' }}
                 >
                     {t('history.title')}
                 </Typography>
@@ -687,7 +685,7 @@ const History = () => {
                                                                                 label={`Setting: ${item.data.SETTING_VALUES || '--'}°`}
                                                                                 size="small"
                                                                                 variant="outlined"
-                                                                                sx={{ fontSize: '0.55rem', height: 16, borderColor: '#1976d2', color: '#1976d2', fontWeight: 600, borderStyle: 'dashed' }}
+                                                                                sx={{ fontSize: '0.55rem', height: 16, borderColor: '#1976d2', color: '#1976d2', fontWeight: 600 }}
                                                                             />
                                                                             <Chip
                                                                                 label={`Display: ${item.data.DISPLAY_VALUES || '--'}°`}
@@ -701,10 +699,9 @@ const History = () => {
                                                                                 variant="outlined"
                                                                                 color={item.data.CHECK_STATUS === 'Pass' ? 'success' : 'error'}
                                                                                 sx={{
-                                                                                    fontSize: '0.6rem',
-                                                                                    height: 18,
-                                                                                    fontWeight: 800,
-                                                                                    borderWidth: '1.5px',
+                                                                                    fontSize: '0.55rem',
+                                                                                    height: 16,
+                                                                                    fontWeight: 600,
                                                                                     bgcolor: item.data.CHECK_STATUS === 'Pass' ? 'rgba(46, 125, 50, 0.04)' : 'rgba(211, 47, 47, 0.04)'
                                                                                 }}
                                                                             />

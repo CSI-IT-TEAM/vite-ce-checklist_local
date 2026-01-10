@@ -22,7 +22,8 @@ import {
     BottomNavigation,
     BottomNavigationAction,
     Paper,
-    Tooltip
+    Tooltip,
+    Button
 } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded'
@@ -216,20 +217,33 @@ const Home = () => {
 
                     {/* Language Selector - Hidden on Mobile (Moved to User Menu) */}
                     <Box sx={{ display: { xs: 'none', md: 'block' } }}>
-                        <Tooltip title="Language">
-                            <IconButton
+                        <Tooltip title="Switch Language">
+                            <Button
                                 color="inherit"
-                                onClick={(e) => setLangAnchorEl(e.currentTarget)}
-                                sx={{ mr: 1 }}
-                            >
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                onClick={(e: React.MouseEvent<HTMLElement>) => setLangAnchorEl(e.currentTarget)}
+                                sx={{
+                                    mr: 2,
+                                    px: 1.5,
+                                    borderRadius: 2,
+                                    textTransform: 'none',
+                                    border: '1px solid rgba(255,255,255,0.15)',
+                                    '&:hover': {
+                                        bgcolor: 'rgba(255,255,255,0.08)',
+                                        borderColor: 'rgba(255,255,255,0.3)'
+                                    }
+                                }}
+                                startIcon={
                                     <img
                                         src={currentLanguage.flag}
                                         alt={currentLanguage.name}
-                                        style={{ width: 24, height: 18, borderRadius: 2 }}
+                                        style={{ width: 22, height: 16, borderRadius: 2, objectFit: 'cover' }}
                                     />
-                                </Box>
-                            </IconButton>
+                                }
+                            >
+                                <Typography variant="body2" sx={{ fontWeight: 600, fontSize: '0.85rem' }}>
+                                    {currentLanguage.name}
+                                </Typography>
+                            </Button>
                         </Tooltip>
                         <Menu
                             anchorEl={langAnchorEl}
@@ -580,46 +594,48 @@ const ProfileContent = ({ isMobile, userInfo, isDark, toggleTheme, language, cha
                         </Box>
                     )}
 
-                    {/* Theme Selection */}
-                    <Box>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-                            <PaletteIcon sx={{ fontSize: 14, color: 'text.secondary', opacity: 0.8 }} />
-                            <Typography variant="caption" fontWeight={700} color="text.secondary" sx={{ fontSize: '0.6rem' }}>
-                                Theme
-                            </Typography>
-                        </Box>
-                        <ToggleButtonGroup
-                            value={isDark ? 'dark' : 'light'}
-                            exclusive
-                            onChange={(_, v) => {
-                                if (v === 'dark' && !isDark) toggleTheme()
-                                if (v === 'light' && isDark) toggleTheme()
-                            }}
-                            fullWidth
-                            size="small"
-                            sx={{
-                                bgcolor: isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.01)',
-                                '& .MuiToggleButton-root': {
-                                    borderRadius: 1.5,
-                                    py: 0.6,
-                                    fontSize: '0.7rem',
-                                    border: '1px solid divider',
-                                    '&.Mui-selected': {
-                                        bgcolor: isDark ? 'rgba(21, 101, 192, 0.15)' : 'rgba(21, 101, 192, 0.08)',
-                                        color: isDark ? '#90caf9' : '#1565c0',
-                                        fontWeight: 700
+                    {/* Theme Selection - Hidden on Desktop because it's in AppBar */}
+                    {isMobile && (
+                        <Box>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                                <PaletteIcon sx={{ fontSize: 14, color: 'text.secondary', opacity: 0.8 }} />
+                                <Typography variant="caption" fontWeight={700} color="text.secondary" sx={{ fontSize: '0.6rem' }}>
+                                    Theme
+                                </Typography>
+                            </Box>
+                            <ToggleButtonGroup
+                                value={isDark ? 'dark' : 'light'}
+                                exclusive
+                                onChange={(_, v) => {
+                                    if (v === 'dark' && !isDark) toggleTheme()
+                                    if (v === 'light' && isDark) toggleTheme()
+                                }}
+                                fullWidth
+                                size="small"
+                                sx={{
+                                    bgcolor: isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.01)',
+                                    '& .MuiToggleButton-root': {
+                                        borderRadius: 1.5,
+                                        py: 0.6,
+                                        fontSize: '0.7rem',
+                                        border: '1px solid divider',
+                                        '&.Mui-selected': {
+                                            bgcolor: isDark ? 'rgba(21, 101, 192, 0.15)' : 'rgba(21, 101, 192, 0.08)',
+                                            color: isDark ? '#90caf9' : '#1565c0',
+                                            fontWeight: 700
+                                        }
                                     }
-                                }
-                            }}
-                        >
-                            <ToggleButton value="light" sx={{ gap: 0.6 }}>
-                                <LightModeIcon sx={{ fontSize: 14 }} /> Light
-                            </ToggleButton>
-                            <ToggleButton value="dark" sx={{ gap: 0.6 }}>
-                                <DarkModeIcon sx={{ fontSize: 14 }} /> Dark
-                            </ToggleButton>
-                        </ToggleButtonGroup>
-                    </Box>
+                                }}
+                            >
+                                <ToggleButton value="light" sx={{ gap: 0.6 }}>
+                                    <LightModeIcon sx={{ fontSize: 14 }} /> Light
+                                </ToggleButton>
+                                <ToggleButton value="dark" sx={{ gap: 0.6 }}>
+                                    <DarkModeIcon sx={{ fontSize: 14 }} /> Dark
+                                </ToggleButton>
+                            </ToggleButtonGroup>
+                        </Box>
+                    )}
                 </Box>
 
                 <Divider sx={{ mb: 1.5 }} />
