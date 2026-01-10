@@ -27,7 +27,6 @@ import {
     ToggleButton,
     ToggleButtonGroup,
     CircularProgress,
-    Divider,
     TextField
 } from '@mui/material'
 import type { SelectChangeEvent } from '@mui/material/Select'
@@ -75,7 +74,6 @@ const History = () => {
         return () => window.removeEventListener('resize', handleResize)
     }, [])
 
-    const [expandedIssues, setExpandedIssues] = useState<Set<string>>(new Set())
 
     const pivotedRows = useMemo(() => {
         if (historyList.length === 0) return []
@@ -164,21 +162,6 @@ const History = () => {
     const visibleRows = pivotedRows.slice(indexOfFirstItem, indexOfLastItem)
     const visibleCards = mergedCardsData.slice(indexOfFirstItem, indexOfLastItem)
 
-    const toggleIssue = (key: string) => {
-        setExpandedIssues(prev => {
-            const newSet = new Set(prev)
-            if (newSet.has(key)) newSet.delete(key)
-            else newSet.add(key)
-            return newSet
-        })
-    }
-
-    const truncateIssue = (text: string, isExpanded: boolean): string => {
-        if (isExpanded || !text) return text
-        const words = text.trim().split(/\s+/)
-        if (words.length <= 1) return text
-        return words[0] + '...'
-    }
 
     const [areaList, setAreaList] = useState<any[]>([])
     const [plantList, setPlantList] = useState<any[]>([])
@@ -306,12 +289,12 @@ const History = () => {
         }
     }
 
-    const renderTemperatureCell = (data: any, position: string, idx: number, isLast: boolean = false) => {
-        const issueKey = `grid_${idx}_${position}`
+    const renderTemperatureCell = (data: any, isLast: boolean = false) => {
 
         if (!data) {
             return (
                 <>
+                    <TableCell align="center" sx={{ p: { xs: 0.5, md: 1 }, borderRight: 1, borderRightColor: 'divider' }} />
                     <TableCell align="center" sx={{ p: { xs: 0.5, md: 1 }, borderRight: 1, borderRightColor: 'divider' }} />
                     <TableCell align="center" sx={{ p: { xs: 0.5, md: 1 }, borderRight: isLast ? 'none' : 1, borderRightColor: isLast ? 'transparent' : 'divider' }} />
                 </>
@@ -320,31 +303,57 @@ const History = () => {
 
         return (
             <>
-                <TableCell align="center" sx={{ p: { xs: 0.5, md: 1 }, borderRight: 1, borderRightColor: 'divider' }}>
+                <TableCell align="center" sx={{ p: { xs: 0.2, md: 0.8 }, borderRight: 1, borderRightColor: 'divider' }}>
                     <Chip
-                        icon={<ThermostatIcon sx={{ fontSize: { xs: '0.8rem', md: '1rem' } }} />}
-                        label={`${data.CHECK_VALUES}°C`}
+                        icon={<ThermostatIcon sx={{ fontSize: { xs: '0.75rem', md: '0.9rem' }, color: '#1976d2 !important' }} />}
+                        label={`${data.SETTING_VALUES || '--'}°C`}
+                        size="small"
+                        variant="outlined"
+                        sx={{
+                            fontSize: { xs: '0.65rem', md: '0.8rem' },
+                            height: { xs: 20, md: 24 },
+                            minWidth: { xs: 55, md: 70 },
+                            borderStyle: 'dashed',
+                            borderColor: '#1976d2',
+                            color: '#1976d2',
+                            fontWeight: 'bold',
+                            bgcolor: 'rgba(25, 118, 210, 0.04)'
+                        }}
+                    />
+                </TableCell>
+                <TableCell align="center" sx={{ p: { xs: 0.2, md: 0.8 }, borderRight: 1, borderRightColor: 'divider' }}>
+                    <Chip
+                        icon={<ThermostatIcon sx={{ fontSize: { xs: '0.75rem', md: '0.9rem' }, color: '#ed6c02 !important' }} />}
+                        label={`${data.DISPLAY_VALUES || '--'}°C`}
+                        size="small"
+                        variant="outlined"
+                        sx={{
+                            fontSize: { xs: '0.65rem', md: '0.8rem' },
+                            height: { xs: 20, md: 24 },
+                            minWidth: { xs: 55, md: 70 },
+                            borderColor: '#ed6c02',
+                            color: '#ed6c02',
+                            fontWeight: 'bold',
+                            bgcolor: 'rgba(237, 108, 2, 0.04)'
+                        }}
+                    />
+                </TableCell>
+                <TableCell align="center" sx={{ p: { xs: 0.2, md: 0.8 }, borderRight: isLast ? 'none' : 1, borderRightColor: isLast ? 'transparent' : 'divider' }}>
+                    <Chip
+                        icon={<ThermostatIcon sx={{ fontSize: { xs: '0.8rem', md: '1rem' }, color: 'inherit !important' }} />}
+                        label={`${data.CHECK_VALUES || '--'}°C`}
                         size="small"
                         color={data.CHECK_STATUS === 'Pass' ? 'success' : 'error'}
                         variant="outlined"
-                        sx={{ fontSize: { xs: '0.65rem', md: '0.8rem' }, height: { xs: 20, md: 24 } }}
+                        sx={{
+                            fontSize: { xs: '0.65rem', md: '0.8rem' },
+                            height: { xs: 22, md: 26 },
+                            fontWeight: 800,
+                            bgcolor: data.CHECK_STATUS === 'Pass' ? 'rgba(46, 125, 50, 0.04)' : 'rgba(211, 47, 47, 0.04)',
+                            borderWidth: '1.5px',
+                            letterSpacing: '0.5px'
+                        }}
                     />
-                </TableCell>
-                <TableCell
-                    align="center"
-                    sx={{
-                        color: 'error.main',
-                        cursor: data.ISSUE ? 'pointer' : 'default',
-                        maxWidth: 100,
-                        p: { xs: 0.5, md: 1 },
-                        borderRight: isLast ? 'none' : 1,
-                        borderRightColor: isLast ? 'transparent' : 'divider'
-                    }}
-                    onClick={() => data.ISSUE && toggleIssue(issueKey)}
-                >
-                    <Typography variant="caption" noWrap={!expandedIssues.has(issueKey)} sx={{ fontSize: { xs: '0.6rem', md: '0.75rem' } }}>
-                        {data.ISSUE ? truncateIssue(data.ISSUE, expandedIssues.has(issueKey)) : ''}
-                    </Typography>
                 </TableCell>
             </>
         )
@@ -443,33 +452,71 @@ const History = () => {
                     <TableContainer sx={{ maxHeight: { xs: 500, md: 650 } }}>
                         <Table size="small" stickyHeader>
                             <TableHead>
-                                <TableRow sx={{ '& th': { background: isDark ? '#1e3a5f' : '#1565c0', color: 'white', fontWeight: 'bold', fontSize: { xs: '0.65rem', md: '0.95rem' }, height: { xs: 40, md: 50 }, px: 0.5, py: 0, textAlign: 'center', borderRight: '1px solid rgba(255,255,255,0.2)', position: 'sticky', top: 0, zIndex: 10 } }}>
-                                    <TableCell rowSpan={2} sx={{ minWidth: { xs: 42, md: 80 } }}>{t('history.date')}</TableCell>
+                                <TableRow sx={{ '& th': { background: isDark ? '#1e3a5f' : '#1565c0', color: 'white', fontWeight: 'bold', fontSize: { xs: '0.65rem', md: '0.95rem' }, height: { xs: 40, md: 50 }, px: 0.5, py: 0, textAlign: 'center', borderRight: '1px solid rgba(255,255,255,0.2)', position: 'sticky', top: 0 } }}>
+                                    <TableCell
+                                        rowSpan={2}
+                                        sx={{
+                                            width: { xs: 68, md: 90 },
+                                            minWidth: { xs: 68, md: 90 },
+                                            position: { xs: 'sticky', md: 'relative' },
+                                            left: { xs: 0, md: 'auto' },
+                                            zIndex: { xs: 50, md: 1 },
+                                            background: isDark ? '#1e3a5f' : '#1565c0',
+                                            boxShadow: { xs: '2px 0 4px rgba(0,0,0,0.2)', md: 'none' },
+                                            borderRight: '1px solid rgba(255,255,255,0.3)',
+                                            whiteSpace: 'nowrap',
+                                            color: 'white',
+                                            px: 0.5
+                                        }}
+                                    >
+                                        {t('history.date')}
+                                    </TableCell>
                                     <TableCell rowSpan={2} sx={{ minWidth: { xs: 60, md: 100 } }}>{t('history.inspector')}</TableCell>
                                     <TableCell rowSpan={2} sx={{ minWidth: { xs: 100, md: 180 } }}>{t('history.area')}</TableCell>
                                     <TableCell rowSpan={2} sx={{ minWidth: { xs: 60, md: 100 } }}>{t('history.machine')}</TableCell>
                                     <TableCell rowSpan={2}>{t('history.lr')}</TableCell>
-                                    <TableCell colSpan={2} align="center">{t('history.lower')}</TableCell>
-                                    <TableCell colSpan={2} align="center">{t('history.middle')}</TableCell>
-                                    <TableCell colSpan={2} align="center" sx={{ borderRight: 'none' }}>{t('history.upper')}</TableCell>
+                                    <TableCell colSpan={3} align="center">{t('history.lower')}</TableCell>
+                                    <TableCell colSpan={3} align="center">{t('history.middle')}</TableCell>
+                                    <TableCell colSpan={3} align="center" sx={{ borderRight: 'none' }}>{t('history.upper')}</TableCell>
                                 </TableRow>
-                                <TableRow sx={{ '& th': { background: '#1e88e5', color: 'white', fontSize: { xs: '0.6rem', md: '0.85rem' }, textAlign: 'center', borderRight: '1px solid rgba(255,255,255,0.2)', px: 0.5, py: 0.5, position: 'sticky', top: { xs: 40, md: 50 }, zIndex: 10 } }}>
-                                    <TableCell>{t('history.temperature')}</TableCell>
-                                    <TableCell>{t('history.issue')}</TableCell>
-                                    <TableCell>{t('history.temperature')}</TableCell>
-                                    <TableCell>{t('history.issue')}</TableCell>
-                                    <TableCell>{t('history.temperature')}</TableCell>
-                                    <TableCell sx={{ borderRight: 'none' }}>{t('history.issue')}</TableCell>
+                                <TableRow sx={{ '& th': { background: '#1e88e5', color: 'white', fontSize: { xs: '0.6rem', md: '0.85rem' }, textAlign: 'center', borderRight: '1px solid rgba(255,255,255,0.2)', px: 1, py: 0.5, position: 'sticky', top: { xs: 40, md: 50 }, zIndex: 10 } }}>
+                                    {/* Không đặt TableCell Ngày Giờ ở đây vì đã dùng rowSpan={2} ở trên */}
+                                    <TableCell>{t('common.setting')}</TableCell>
+                                    <TableCell>{t('common.display')}</TableCell>
+                                    <TableCell sx={{ borderRight: 'none' }}>{t('history.temperature')}</TableCell>
+                                    <TableCell>{t('common.setting')}</TableCell>
+                                    <TableCell>{t('common.display')}</TableCell>
+                                    <TableCell sx={{ borderRight: 'none' }}>{t('history.temperature')}</TableCell>
+                                    <TableCell>{t('common.setting')}</TableCell>
+                                    <TableCell>{t('common.display')}</TableCell>
+                                    <TableCell sx={{ borderRight: 'none' }}>{t('history.temperature')}</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
                                 {visibleRows.length === 0 ? (
-                                    <TableRow><TableCell colSpan={11} align="center" sx={{ py: 4, fontSize: '0.8rem' }}>{t('history.noData')}</TableCell></TableRow>
+                                    <TableRow><TableCell colSpan={14} align="center" sx={{ py: 4, fontSize: '0.8rem' }}>{t('history.noData')}</TableCell></TableRow>
                                 ) : visibleRows.map((row, idx) => (
                                     <TableRow key={idx} sx={{ '&:hover': { bgcolor: isDark ? 'rgba(100, 181, 246, 0.08)' : 'rgba(21, 101, 192, 0.04)' } }}>
                                         {row.isFirstInGroup && (
                                             <>
-                                                <TableCell rowSpan={row.groupRowCount} align="center" sx={{ px: { xs: 0.2, md: 0.5 }, py: 0.5, borderRight: 1, borderRightColor: 'divider' }}>
+                                                <TableCell
+                                                    rowSpan={row.groupRowCount}
+                                                    align="center"
+                                                    sx={{
+                                                        width: { xs: 68, md: 90 },
+                                                        minWidth: { xs: 68, md: 90 },
+                                                        px: 0.5,
+                                                        py: 0.5,
+                                                        position: { xs: 'sticky', md: 'relative' },
+                                                        left: { xs: 0, md: 'auto' },
+                                                        zIndex: { xs: 30, md: 'auto' },
+                                                        bgcolor: { xs: 'background.paper', md: 'transparent' },
+                                                        boxShadow: { xs: '2px 0 4px rgba(0,0,0,0.1)', md: 'none' },
+                                                        borderRight: '1px solid',
+                                                        borderRightColor: 'divider',
+                                                        whiteSpace: 'nowrap'
+                                                    }}
+                                                >
                                                     <Typography variant="body2" fontWeight="bold" sx={{ fontSize: { xs: '0.7rem', md: '0.85rem' }, whiteSpace: 'nowrap' }}>{row.YMD?.toString().split(' ')[0]}</Typography>
                                                     <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.6rem', md: '0.75rem' } }}>{row.HMS}</Typography>
                                                 </TableCell>
@@ -493,9 +540,9 @@ const History = () => {
                                                 }}
                                             />
                                         </TableCell>
-                                        {renderTemperatureCell(row.lower, 'lower', idx)}
-                                        {renderTemperatureCell(row.middle, 'middle', idx)}
-                                        {renderTemperatureCell(row.upper, 'upper', idx, true)}
+                                        {renderTemperatureCell(row.lower)}
+                                        {renderTemperatureCell(row.middle)}
+                                        {renderTemperatureCell(row.upper, true)}
                                     </TableRow>
                                 ))}
                             </TableBody>
@@ -612,29 +659,56 @@ const History = () => {
                                                         </Typography>
                                                     </Box>
 
-                                                    {/* Values Row */}
-                                                    <Box sx={{ display: 'flex', p: 0.6, alignItems: 'center' }}>
-                                                        <Box sx={{ flex: 1, textAlign: 'center' }}>
-                                                            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.2, fontSize: '0.6rem', textAlign: 'center' }}>{t('history.left')}</Typography>
-                                                            {left ? (
-                                                                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.4 }}>
-                                                                    <Typography variant="body2" fontWeight="bold" color="text.primary" sx={{ fontSize: '0.75rem' }}>{left.CHECK_VALUES}°C</Typography>
-                                                                    <Chip label="Pass" size="small" sx={{ bgcolor: '#10b981', color: '#fff', fontWeight: 'bold', height: 15, fontSize: '0.55rem' }} />
+                                                    {/* Values Row - Updated to show S, D, B values */}
+                                                    <Box sx={{ display: 'flex', flexDirection: 'column', p: 0.8, gap: 0.8 }}>
+                                                        {[
+                                                            { side: 'left', data: left, label: t('history.left') },
+                                                            { side: 'right', data: right, label: t('history.right') }
+                                                        ].map((item, sIdx) => (
+                                                            <Box key={sIdx} sx={{
+                                                                display: 'flex',
+                                                                alignItems: 'center',
+                                                                justifyContent: 'space-between',
+                                                                bgcolor: item.side === 'left' ? 'rgba(25, 118, 210, 0.03)' : 'rgba(156, 39, 176, 0.03)',
+                                                                p: 0.7,
+                                                                borderRadius: 1.5,
+                                                                border: '1px solid',
+                                                                borderColor: 'divider'
+                                                            }}>
+                                                                <Typography variant="caption" fontWeight="bold" sx={{ minWidth: 40, color: 'text.secondary', fontSize: '0.65rem' }}>{item.label}</Typography>
+                                                                <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center' }}>
+                                                                    {item.data ? (
+                                                                        <>
+                                                                            <Chip
+                                                                                label={`Setting: ${item.data.SETTING_VALUES || '--'}°`}
+                                                                                size="small"
+                                                                                variant="outlined"
+                                                                                sx={{ fontSize: '0.55rem', height: 16, borderColor: '#1976d2', color: '#1976d2', fontWeight: 600, borderStyle: 'dashed' }}
+                                                                            />
+                                                                            <Chip
+                                                                                label={`Display: ${item.data.DISPLAY_VALUES || '--'}°`}
+                                                                                size="small"
+                                                                                variant="outlined"
+                                                                                sx={{ fontSize: '0.55rem', height: 16, borderColor: '#ed6c02', color: '#ed6c02', fontWeight: 600 }}
+                                                                            />
+                                                                            <Chip
+                                                                                label={`Surface: ${item.data.CHECK_VALUES}°C`}
+                                                                                size="small"
+                                                                                variant="outlined"
+                                                                                color={item.data.CHECK_STATUS === 'Pass' ? 'success' : 'error'}
+                                                                                sx={{
+                                                                                    fontSize: '0.6rem',
+                                                                                    height: 18,
+                                                                                    fontWeight: 800,
+                                                                                    borderWidth: '1.5px',
+                                                                                    bgcolor: item.data.CHECK_STATUS === 'Pass' ? 'rgba(46, 125, 50, 0.04)' : 'rgba(211, 47, 47, 0.04)'
+                                                                                }}
+                                                                            />
+                                                                        </>
+                                                                    ) : <Typography variant="caption" color="text.disabled">-</Typography>}
                                                                 </Box>
-                                                            ) : <Typography variant="caption" color="text.disabled">-</Typography>}
-                                                        </Box>
-
-                                                        <Divider orientation="vertical" flexItem sx={{ borderStyle: 'dotted', mx: 0.5, height: 20, alignSelf: 'center' }} />
-
-                                                        <Box sx={{ flex: 1, textAlign: 'center' }}>
-                                                            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.2, fontSize: '0.6rem', textAlign: 'center' }}>{t('history.right')}</Typography>
-                                                            {right ? (
-                                                                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.4 }}>
-                                                                    <Typography variant="body2" fontWeight="bold" color="text.primary" sx={{ fontSize: '0.75rem' }}>{right.CHECK_VALUES}°C</Typography>
-                                                                    <Chip label="Pass" size="small" sx={{ bgcolor: '#10b981', color: '#fff', fontWeight: 'bold', height: 15, fontSize: '0.55rem' }} />
-                                                                </Box>
-                                                            ) : <Typography variant="caption" color="text.disabled">-</Typography>}
-                                                        </Box>
+                                                            </Box>
+                                                        ))}
                                                     </Box>
                                                 </Box>
                                             )

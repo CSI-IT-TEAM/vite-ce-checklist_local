@@ -69,7 +69,7 @@
         "type": "Type",
         "position": "Position",
         "lr": "Left/Right",
-        "temperature": "Temperature",
+        "temperature": "Surface",
         "status": "Status",
         "issue": "Remarks",
         "lower": "Bottom",
