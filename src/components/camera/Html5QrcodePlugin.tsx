@@ -49,22 +49,20 @@ const Html5QrcodePlugin: React.FC<Html5QrcodePluginProps> = (props) => {
 
         try {
           const config: any = {
-            fps: props.fps ?? 25,
+            fps: props.fps ?? 20, // Tùy chỉnh xuống 20 để ổn định hơn cho CPU
             qrbox: props.qrbox ?? 150,
             aspectRatio: props.aspectRatio ?? 1.0,
-            // Đưa các ràng buộc video vào đúng vị trí trong config
             videoConstraints: {
               facingMode: 'environment',
-              focusMode: 'continuous',
-              advanced: [{ focusMode: 'continuous' }]
+              focusMode: 'continuous'
+              // advanced: [{ focusMode: 'continuous' }]
             },
-            useBarCodeDetectorIfSupported: true,
+            useBarCodeDetectorIfSupported: true, // Ưu tiên công nghệ hệ điều hành
             rememberLastUsedCamera: true,
             showTorchButtonIfSupported: true,
           };
 
-          // BƯỚC 2: Bắt đầu quét
-          // Tham số đầu tiên nên là config đơn giản hoặc ID camera
+          // BƯỚC 2: Bắt đầu quét với cài đặt an toàn nhất
           await scannerRef.current.start(
             { facingMode: 'environment' },
             config,
