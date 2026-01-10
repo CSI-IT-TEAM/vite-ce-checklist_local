@@ -290,20 +290,26 @@ const History = () => {
     }
 
     const renderTemperatureCell = (data: any, isLast: boolean = false) => {
+        const cellStyle = {
+            p: { xs: 0.2, md: 0.8 },
+            minWidth: { xs: 65, md: 85 },
+            borderRight: 1,
+            borderRightColor: 'divider'
+        }
 
         if (!data) {
             return (
                 <>
-                    <TableCell align="center" sx={{ p: { xs: 0.5, md: 1 }, borderRight: 1, borderRightColor: 'divider' }} />
-                    <TableCell align="center" sx={{ p: { xs: 0.5, md: 1 }, borderRight: 1, borderRightColor: 'divider' }} />
-                    <TableCell align="center" sx={{ p: { xs: 0.5, md: 1 }, borderRight: isLast ? 'none' : 1, borderRightColor: isLast ? 'transparent' : 'divider' }} />
+                    <TableCell align="center" sx={cellStyle} />
+                    <TableCell align="center" sx={cellStyle} />
+                    <TableCell align="center" sx={{ ...cellStyle, borderRight: isLast ? 'none' : 1, borderRightColor: isLast ? 'transparent' : 'divider' }} />
                 </>
             )
         }
 
         return (
             <>
-                <TableCell align="center" sx={{ p: { xs: 0.2, md: 0.8 }, borderRight: 1, borderRightColor: 'divider' }}>
+                <TableCell align="center" sx={cellStyle}>
                     <Chip
                         icon={<ThermostatIcon sx={{ fontSize: { xs: '0.75rem', md: '0.9rem' }, color: '#1976d2 !important' }} />}
                         label={`${data.SETTING_VALUES || '--'}°C`}
@@ -312,7 +318,8 @@ const History = () => {
                         sx={{
                             fontSize: { xs: '0.65rem', md: '0.8rem' },
                             height: { xs: 20, md: 24 },
-                            minWidth: { xs: 55, md: 70 },
+                            width: '100%',
+                            maxWidth: { xs: 60, md: 80 },
                             borderColor: '#1976d2',
                             color: '#1976d2',
                             fontWeight: 'bold',
@@ -320,7 +327,7 @@ const History = () => {
                         }}
                     />
                 </TableCell>
-                <TableCell align="center" sx={{ p: { xs: 0.2, md: 0.8 }, borderRight: 1, borderRightColor: 'divider' }}>
+                <TableCell align="center" sx={cellStyle}>
                     <Chip
                         icon={<ThermostatIcon sx={{ fontSize: { xs: '0.75rem', md: '0.9rem' }, color: '#ed6c02 !important' }} />}
                         label={`${data.DISPLAY_VALUES || '--'}°C`}
@@ -329,7 +336,8 @@ const History = () => {
                         sx={{
                             fontSize: { xs: '0.65rem', md: '0.8rem' },
                             height: { xs: 20, md: 24 },
-                            minWidth: { xs: 55, md: 70 },
+                            width: '100%',
+                            maxWidth: { xs: 60, md: 80 },
                             borderColor: '#ed6c02',
                             color: '#ed6c02',
                             fontWeight: 'bold',
@@ -337,7 +345,7 @@ const History = () => {
                         }}
                     />
                 </TableCell>
-                <TableCell align="center" sx={{ p: { xs: 0.2, md: 0.8 }, borderRight: isLast ? 'none' : 1, borderRightColor: isLast ? 'transparent' : 'divider' }}>
+                <TableCell align="center" sx={{ ...cellStyle, borderRight: isLast ? 'none' : 1, borderRightColor: isLast ? 'transparent' : 'divider' }}>
                     <Chip
                         icon={<ThermostatIcon sx={{ fontSize: { xs: '0.8rem', md: '1rem' }, color: 'inherit !important' }} />}
                         label={`${data.CHECK_VALUES || '--'}°C`}
@@ -347,6 +355,8 @@ const History = () => {
                         sx={{
                             fontSize: { xs: '0.65rem', md: '0.8rem' },
                             height: { xs: 20, md: 24 },
+                            width: '100%',
+                            maxWidth: { xs: 60, md: 80 },
                             fontWeight: 'bold',
                             bgcolor: data.CHECK_STATUS === 'Pass' ? 'rgba(46, 125, 50, 0.04)' : 'rgba(211, 47, 47, 0.04)',
                             letterSpacing: '0.5px'
@@ -454,7 +464,7 @@ const History = () => {
                     <TableContainer sx={{ maxHeight: { xs: 500, md: 650 } }}>
                         <Table size="small" stickyHeader>
                             <TableHead>
-                                <TableRow sx={{ '& th': { background: isDark ? '#1e3a5f' : '#1565c0', color: 'white', fontWeight: 'bold', fontSize: { xs: '0.65rem', md: '0.95rem' }, height: { xs: 40, md: 50 }, px: 0.5, py: 0, textAlign: 'center', borderRight: '1px solid rgba(255,255,255,0.2)', position: 'sticky', top: 0 } }}>
+                                <TableRow sx={{ '& th': { background: isDark ? '#1e3a5f' : '#1565c0', color: 'white', fontWeight: 'bold', fontSize: { xs: '0.65rem', md: '0.9rem' }, height: { xs: 35, md: 40 }, px: 0.5, py: 0, textAlign: 'center', borderRight: '1px solid rgba(255,255,255,0.2)', position: 'sticky', top: 0, borderBottom: '1px solid rgba(255,255,255,0.1)' } }}>
                                     <TableCell
                                         rowSpan={2}
                                         sx={{
@@ -476,19 +486,18 @@ const History = () => {
                                     <TableCell rowSpan={2} sx={{ minWidth: { xs: 60, md: 100 } }}>{t('history.inspector')}</TableCell>
                                     <TableCell rowSpan={2} sx={{ minWidth: { xs: 100, md: 180 } }}>{t('history.area')}</TableCell>
                                     <TableCell rowSpan={2} sx={{ minWidth: { xs: 60, md: 100 } }}>{t('history.machine')}</TableCell>
-                                    <TableCell rowSpan={2}>{t('history.lr')}</TableCell>
-                                    <TableCell colSpan={3} align="center">{t('history.lower')}</TableCell>
-                                    <TableCell colSpan={3} align="center">{t('history.middle')}</TableCell>
+                                    <TableCell rowSpan={2} sx={{ borderRight: '2px solid rgba(255,255,255,0.3)' }}>{t('history.lr')}</TableCell>
+                                    <TableCell colSpan={3} align="center" sx={{ borderRight: '2px solid rgba(255,255,255,0.3)' }}>{t('history.lower')}</TableCell>
+                                    <TableCell colSpan={3} align="center" sx={{ borderRight: '2px solid rgba(255,255,255,0.3)' }}>{t('history.middle')}</TableCell>
                                     <TableCell colSpan={3} align="center" sx={{ borderRight: 'none' }}>{t('history.upper')}</TableCell>
                                 </TableRow>
-                                <TableRow sx={{ '& th': { background: '#1e88e5', color: 'white', fontSize: { xs: '0.6rem', md: '0.85rem' }, textAlign: 'center', borderRight: '1px solid rgba(255,255,255,0.2)', px: 1, py: 0.5, position: 'sticky', top: { xs: 40, md: 50 }, zIndex: 10 } }}>
-                                    {/* Không đặt TableCell Ngày Giờ ở đây vì đã dùng rowSpan={2} ở trên */}
+                                <TableRow sx={{ '& th': { background: isDark ? '#2c4c7c' : '#1e88e5', color: 'white', fontSize: { xs: '0.6rem', md: '0.8rem' }, fontWeight: 600, textAlign: 'center', borderRight: '1px solid rgba(255,255,255,0.2)', height: { xs: 35, md: 40 }, px: 1, py: 0, position: 'sticky', top: { xs: 35, md: 40 }, zIndex: 10 } }}>
                                     <TableCell>{t('common.setting')}</TableCell>
                                     <TableCell>{t('common.display')}</TableCell>
-                                    <TableCell sx={{ borderRight: 'none' }}>{t('history.temperature')}</TableCell>
+                                    <TableCell sx={{ borderRight: '2px solid rgba(255,255,255,0.3)' }}>{t('history.temperature')}</TableCell>
                                     <TableCell>{t('common.setting')}</TableCell>
                                     <TableCell>{t('common.display')}</TableCell>
-                                    <TableCell sx={{ borderRight: 'none' }}>{t('history.temperature')}</TableCell>
+                                    <TableCell sx={{ borderRight: '2px solid rgba(255,255,255,0.3)' }}>{t('history.temperature')}</TableCell>
                                     <TableCell>{t('common.setting')}</TableCell>
                                     <TableCell>{t('common.display')}</TableCell>
                                     <TableCell sx={{ borderRight: 'none' }}>{t('history.temperature')}</TableCell>
