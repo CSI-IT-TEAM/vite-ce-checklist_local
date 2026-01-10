@@ -167,32 +167,43 @@ const Home = () => {
                         }}
                         onClick={() => navigate('/')}
                     >
-                        {/* CSG Logo */}
+                        {/* CSG Brand Logo - Justified */}
                         <Box
                             sx={{
                                 bgcolor: '#1a2744',
-                                px: { xs: 0.6, sm: 0.8 },
-                                py: { xs: 0.4, sm: 0.5 },
-                                mr: 0.8,
+                                p: { xs: 0.5, sm: 0.6 },
+                                mr: 1,
                                 display: 'flex',
                                 flexDirection: 'column',
                                 alignItems: 'center',
-                                borderRadius: 0.5
+                                borderRadius: 0.5,
+                                minWidth: { xs: 50, sm: 60 }
                             }}
                         >
-                            <Box sx={{ width: '100%', height: '2.5px', bgcolor: 'white', mb: 0.15 }} />
-                            <Typography
-                                sx={{
-                                    color: 'white',
-                                    fontWeight: 700,
-                                    fontSize: { xs: '1.25rem', sm: '1.4rem' },
-                                    lineHeight: 1,
-                                    letterSpacing: 2
-                                }}
-                            >
-                                CSG
-                            </Typography>
-                            <Box sx={{ width: '100%', height: '2.5px', bgcolor: 'white', mt: 0.15 }} />
+                            <Box sx={{ width: '100%', height: '2.5px', bgcolor: 'white', mb: 0.5, borderRadius: '0.5px' }} />
+                            <Box sx={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                width: '100%'
+                            }}>
+                                {['C', 'S', 'G'].map((char) => (
+                                    <Typography
+                                        key={char}
+                                        sx={{
+                                            color: 'white',
+                                            fontWeight: 900,
+                                            fontSize: { xs: '1.1rem', sm: '1.3rem' },
+                                            lineHeight: 1,
+                                            textAlign: 'center',
+                                            transform: 'scaleY(1.3)',
+                                            display: 'inline-block'
+                                        }}
+                                    >
+                                        {char}
+                                    </Typography>
+                                ))}
+                            </Box>
+                            <Box sx={{ width: '100%', height: '2.5px', bgcolor: 'white', mt: 0.5, borderRadius: '0.5px' }} />
                         </Box>
                         <Box>
                             <Typography variant="subtitle2" fontWeight="bold" lineHeight={1.2} sx={{ fontSize: { xs: '0.95rem', sm: '1rem' } }}>

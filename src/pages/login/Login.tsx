@@ -6,14 +6,12 @@ import {
     Button,
     Typography,
     Container,
-    Avatar,
     InputAdornment,
     FormControlLabel,
     Checkbox,
     Alert,
     CircularProgress
 } from '@mui/material'
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import CreditCardIcon from '@mui/icons-material/CreditCard'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from '../../contexts/LanguageContext'
@@ -122,45 +120,103 @@ const Login = () => {
                     }}
                 >
                     {/* Header */}
+                    {/* Header - Brand Identity Only */}
                     <Box sx={{
                         background: isDark
                             ? 'linear-gradient(135deg, #1e3a5f 0%, #0d1929 100%)'
                             : 'linear-gradient(135deg, #1e88e5 0%, #1565c0 100%)',
-                        py: { xs: 4, md: 6 },
+                        pt: { xs: 4, md: 5 },
+                        pb: { xs: 3, md: 4 },
                         px: 3,
                         textAlign: 'center',
                         color: 'white',
                         position: 'relative'
                     }}>
-                        <Avatar sx={{
-                            bgcolor: 'rgba(255,255,255,0.15)',
-                            backdropFilter: 'blur(10px)',
-                            border: '1px solid rgba(255,255,255,0.3)',
-                            width: { xs: 70, md: 90 },
-                            height: { xs: 70, md: 90 },
-                            mx: 'auto',
-                            mb: 2.5,
-                            boxShadow: '0 8px 32px rgba(0,0,0,0.2)'
-                        }}>
-                            <LockOutlinedIcon sx={{ color: 'white', fontSize: { xs: 35, md: 45 } }} />
-                        </Avatar>
-                        <Typography variant="h4" fontWeight={800} sx={{
-                            fontSize: { xs: '1.75rem', md: '2rem' },
-                            letterSpacing: '-0.02em',
-                            mb: 1
-                        }}>
-                            {t('login.header')}
-                        </Typography>
-                        <Typography variant="body1" sx={{
-                            opacity: 0.8,
-                            fontWeight: 500,
-                            fontSize: { xs: '0.9rem', md: '1rem' }
-                        }}>
-                            {t('login.subtitle')}
-                        </Typography>
+                        {/* CSG Brand Logo */}
+                        <Box
+                            sx={{
+                                bgcolor: '#1a2744',
+                                p: { xs: 1.2, md: 2 },
+                                mx: 'auto',
+                                mb: 1.5,
+                                display: 'inline-flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                borderRadius: 1.5,
+                                boxShadow: '0 15px 45px rgba(0,0,0,0.4)',
+                                border: '1px solid rgba(255,255,255,0.1)'
+                            }}
+                        >
+                            <Box sx={{ width: '100%', height: { xs: '4px', md: '5px' }, bgcolor: 'white', mb: { xs: 0.8, md: 1.2 }, borderRadius: '1.5px' }} />
+                            <Box sx={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                width: '100%'
+                            }}>
+                                {['C', 'S', 'G'].map((char) => (
+                                    <Typography
+                                        key={char}
+                                        sx={{
+                                            color: 'white',
+                                            fontWeight: 950,
+                                            fontSize: { xs: '2.2rem', md: '3.8rem' },
+                                            lineHeight: 1,
+                                            textAlign: 'center',
+                                            transform: 'scaleY(1.35)',
+                                            display: 'inline-block'
+                                        }}
+                                    >
+                                        {char}
+                                    </Typography>
+                                ))}
+                            </Box>
+                            <Box sx={{ width: '100%', height: { xs: '4px', md: '5px' }, bgcolor: 'white', mt: { xs: 0.8, md: 1.2 }, borderRadius: '1.5px' }} />
+                        </Box>
+
+                        {/* System Branding - Subtle & Integrated */}
+                        <Box sx={{ textAlign: 'center' }}>
+                            <Typography sx={{
+                                fontWeight: 800,
+                                fontSize: { xs: '1rem', md: '1.4rem' },
+                                color: 'white',
+                                opacity: 0.9,
+                                lineHeight: 1,
+                                letterSpacing: 1
+                            }}>
+                                VJ CE
+                            </Typography>
+                            <Typography sx={{
+                                fontSize: { xs: '0.55rem', md: '0.65rem' },
+                                color: 'white',
+                                opacity: 0.7,
+                                fontWeight: 600,
+                                letterSpacing: 3,
+                                textTransform: 'uppercase',
+                                mt: 0.5
+                            }}>
+                                MOBILE SYSTEM
+                            </Typography>
+                        </Box>
                     </Box>
 
-                    <Box component="form" onSubmit={handleLogin} sx={{ p: { xs: 3.5, md: 5 }, pt: 3 }}>
+                    {/* Form Section - Action & Feedback */}
+                    <Box component="form" onSubmit={handleLogin} sx={{ p: { xs: 3, md: 5 }, pt: { xs: 3, md: 4 } }}>
+                        <Box sx={{ mb: 2.5, textAlign: 'center' }}>
+                            <Typography variant="h5" fontWeight={800} sx={{
+                                fontSize: { xs: '1.4rem', md: '1.75rem' },
+                                color: isDark ? 'white' : 'text.primary',
+                                mb: 0.5
+                            }}>
+                                {t('login.header')}
+                            </Typography>
+                            <Typography variant="body2" sx={{
+                                color: 'text.secondary',
+                                fontWeight: 500,
+                                opacity: 0.85
+                            }}>
+                                {t('login.subtitle')}
+                            </Typography>
+                        </Box>
                         <TextField
                             fullWidth
                             label={t('login.cardNumber')}
