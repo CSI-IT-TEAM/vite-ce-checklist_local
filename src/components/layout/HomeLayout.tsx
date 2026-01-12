@@ -65,10 +65,10 @@ const Home = () => {
     const [isSidebarExpanded, setIsSidebarExpanded] = useState(false)
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
 
-    // Scroll to top on mount
+    // Scroll to top on route change
     useEffect(() => {
         window.scrollTo(0, 0)
-    }, [])
+    }, [location.pathname])
 
     // Handle resize
     useEffect(() => {
