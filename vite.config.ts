@@ -20,17 +20,17 @@ export default defineConfig({
     chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
-        manualChunks(id) {
-          if (id.includes('node_modules')) {
-            if (id.includes('@mui')) {
-              return 'vendor-mui';
-            }
-            if (id.includes('react')) {
-              return 'vendor-react';
-            }
-            return 'vendor';
-          }
-        }
+        // manualChunks(id) {
+        //   if (id.includes('node_modules')) {
+        //     if (id.includes('@mui')) {
+        //       return 'vendor-mui';
+        //     }
+        //     if (id.includes('react')) {
+        //       return 'vendor-react';
+        //     }
+        //     return 'vendor';
+        //   }
+        // }
       }
     }
   }
