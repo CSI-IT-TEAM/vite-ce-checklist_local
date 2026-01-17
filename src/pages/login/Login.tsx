@@ -31,11 +31,25 @@ const Login = () => {
     useEffect(() => {
         const savedCard = localStorage.getItem('cardNumber')
         const savedRemember = localStorage.getItem('rememberMe') === 'true'
+
         if (savedCard && savedRemember) {
             setCardNumber(savedCard)
             setRememberMe(true)
         }
     }, [])
+
+    // Listen for login event from other tabs (cross-tab login sync)
+    useEffect(() => {
+        const handleStorageChange = (event: StorageEvent) => {
+            // If login event is triggered from another tab, redirect to home
+            if (event.key === 'login' && event.newValue) {
+                navigate('/')
+            }
+        }
+
+        window.addEventListener('storage', handleStorageChange)
+        return () => window.removeEventListener('storage', handleStorageChange)
+    }, [navigate])
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -62,6 +76,8 @@ const Login = () => {
                     localStorage.removeItem('cardNumber')
                     localStorage.removeItem('rememberMe')
                 }
+                // Trigger login event for other tabs
+                localStorage.setItem('login', Date.now().toString())
                 navigate('/')
             } else {
                 setError(t('login.errorInvalidCard'))

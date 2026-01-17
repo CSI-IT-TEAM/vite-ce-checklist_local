@@ -130,6 +130,9 @@ const Home = () => {
         const themeMode = localStorage.getItem('themeMode')
         const language = localStorage.getItem('language')
 
+        // Trigger logout event for other tabs BEFORE clearing
+        localStorage.setItem('logout', Date.now().toString())
+
         localStorage.clear()
 
         if (cardNumber) localStorage.setItem('cardNumber', cardNumber)
